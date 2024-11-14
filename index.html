@@ -79,17 +79,23 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            min-height: 100%;
+            width: 100%;
+            position: relative;
+        }
+
         body {
             background: linear-gradient(135deg, var(--color-background-start) 0%, var(--color-background-end) 100%);
-            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 2rem;
-            position: relative;
-            overflow: hidden;
+            padding: 2rem 1rem 4rem 1rem;
             font-family: var(--font-body);
             line-height: 1.5;
+            min-height: 100vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .stars {
@@ -98,7 +104,6 @@
             height: 100%;
             z-index: 0;
             pointer-events: none;
-            overflow: hidden;
         }
 
         .seven {
@@ -244,6 +249,7 @@
             flex-direction: column;
             align-items: center;
             gap: 1.5rem;
+            position: relative;
         }
 
         .header {
@@ -528,16 +534,21 @@
         }
 
         .footer {
-            position: fixed;
-            bottom: 1rem;
+            position: relative;
+            margin-top: 2rem;
             color: var(--color-footer);
             font-family: var(--font-subtitle);
             font-size: var(--font-size-footer);
             opacity: 0.5;
             text-align: center;
+            width: 100%;
         }
 
         @media (max-width: 600px) {
+            body {
+                padding: 1rem 1rem 3rem 1rem;
+            }
+
             .social-buttons {
                 gap: 1rem;
             }
@@ -545,6 +556,8 @@
             :root {
                 --social-button-size: 80px;
                 --social-icon-size: 50px;
+                --avatar-size: 200px;
+                --font-size-title: 2.25rem;
             }
 
             .subtitle-container {
@@ -556,6 +569,15 @@
                 flex-direction: column;
                 align-items: center;
                 gap: 0.75rem;
+            }
+
+            .content {
+                gap: 1.25rem;
+            }
+
+            .long-button {
+                height: 3rem;
+                padding: 0 1rem;
             }
         }
     </style>
