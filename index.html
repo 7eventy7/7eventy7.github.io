@@ -1,79 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- Previous head content remains the same until metrics section -->
 <head>
-    <!-- Previous head content remains exactly the same -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>7eventy7</title>
     <style>
-        /* All previous styles remain exactly the same */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rowdies:wght@700&family=DM+Sans:wght@400;500&family=JetBrains+Mono:wght@400&display=swap');
 
-        :root {
-            /* Content Configuration */
-            --subtitle-text: "call-me-7";
-            --footer-text: "// lucky numbers only //";
-            
-            /* Animation Timings */
-            --hover-animation-speed: 0.5s;
-            --hover-out-speed: 0.25s;
-            
-            /* Layout Sizes */
-            --content-max-width: 600px;
-            --avatar-size: 256px;
-            --social-button-size: 90px;
-            --social-icon-size: 60px;
-            --button-height: 3.5rem;
-            --avatar-glow-size: 140px;
-            --avatar-glow-opacity: 0.3;
-            --shooting-star-size: 80px;
-            
-            /* Colors */
-            --color-background-start: #2a1f3d;
-            --color-background-end: #1a1625;
-            --color-text-primary: #ffffff;
-            --color-text-secondary: #a8a8a8;
-            --color-button-bg: rgba(77, 64, 97, 0.301);
-            --color-button-hover: rgba(201, 131, 215, 0.2);
-            --color-button-shadow: rgba(0, 0, 0, 0.2);
-            --color-sheen: #bf65f796;
-            --color-footer: rgba(255, 255, 255, 0.1);
-            --color-bio-bg: rgba(77, 64, 97, 0.4);
-            --color-avatar-glow: rgba(151, 104, 180, 0.636);
-            
-            /* Seven Animation Variables */
-            --seven-color: rgba(92, 66, 106, 0.6);
-            --seven-glow: rgba(151, 104, 180, 0.3);
-            --seven-size: 24px;
-            --seven-background-intensity: 0.6;
-            --shooting-seven-size: 32px;
-            --shooting-seven-color: #822f7d;
-            --shooting-seven-glow: rgba(151, 104, 180, 0.8);
-            --shooting-seven-frequency: 7777;
-            --shooting-seven-speed: 3s;
-            --shooting-seven-intensity: 3;
-            
-            /* Fonts */
-            --font-title: 'Rowdies', cursive;
-            --font-subtitle: 'DM Sans', sans-serif;
-            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
-            
-            /* Font Sizes */
-            --font-size-title: 2.75rem;
-            --font-size-subtitle: 1.1rem;
-            --font-size-button: 1rem;
-            --font-size-footer: 0.875rem;
-            --font-size-bio: 0.95rem;
-            --font-size-metrics: 0.9rem;
-            
-            /* Animation */
-            --transition-bounce: cubic-bezier(0.4, 0, 0.2, 1);
-            --hover-lift-distance: -4px;
-            --hover-scale: 1.15;
-        }
+            :root {
+                /* Typography - Fonts */
+                --font-title: 'Rowdies', cursive;
+                --font-subtitle: 'DM Sans', sans-serif;
+                --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                --font-mono: 'JetBrains Mono', monospace;
 
+                /* Typography - Font Sizes */
+                --font-size-title: 2.75rem;
+                --font-size-subtitle: 1.1rem;
+                --font-size-button: 1rem;
+                --font-size-footer: 0.875rem;
+                --font-size-bio: 0.95rem;
+                --font-size-metrics: 0.9rem;
+
+                /* Layout & Dimensions */
+                --content-max-width: 600px;
+                --avatar-size: 256px;
+                --social-button-size: 90px;
+                --social-icon-size: 60px;
+                --button-height: 3.5rem;
+                --avatar-glow-size: 140px;
+                --shooting-star-size: 80px;
+
+                /* Colors - Background */
+                --color-background-start: #2a1f3d;
+                --color-background-end: #1a1625;
+                --color-button-bg: rgba(77, 64, 97, 0.301);
+                --color-bio-bg: rgba(77, 64, 97, 0.4);
+                --color-footer: rgba(255, 255, 255, 0.1);
+
+                /* Colors - Text */
+                --color-text-primary: #ffffff;
+                --color-text-secondary: #a8a8a8;
+
+                /* Colors - Effects */
+                --color-button-hover: rgba(201, 131, 215, 0.2);
+                --color-button-shadow: rgba(0, 0, 0, 0.2);
+                --color-sheen: #bf65f796;
+                --color-avatar-glow: rgba(151, 104, 180, 0.636);
+
+                /* Animations & Transitions */
+                --hover-animation-speed: 0.5s;
+                --hover-out-speed: 0.25s;
+                --transition-bounce: cubic-bezier(0.4, 0, 0.2, 1);
+                --hover-lift-distance: -4px;
+                --hover-scale: 1.15;
+
+                /* Special Seven Theme */
+                --subtitle-text: "call-me-7";
+                --footer-text: "// lucky numbers only //";
+                --seven-color: rgba(92, 66, 106, 0.6);
+                --seven-glow: rgba(151, 104, 180, 0.3);
+                --seven-size: 24px;
+                --seven-background-intensity: 0.6;
+                --avatar-glow-opacity: 0.3;
+
+                /* Shooting Seven Animation */
+                --shooting-seven-size: 32px;
+                --shooting-seven-color: #822f7d;
+                --shooting-seven-glow: rgba(151, 104, 180, 0.8);
+                --shooting-seven-frequency: 7777;
+                --shooting-seven-speed: 3s;
+                --shooting-seven-intensity: 3;
+            }
+            
         * {
             margin: 0;
             padding: 0;
@@ -189,6 +188,50 @@
             }
             100% {
                 transform: translate(calc(var(--start-x) + var(--end-offset)), -100px) rotate(-360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes shooting-seven-top-right {
+            0% {
+                transform: translate(-100px, -100px) rotate(0deg);
+                opacity: var(--shooting-seven-intensity);
+            }
+            100% {
+                transform: translate(calc(100vw + 100px), calc(100vh + 100px)) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes shooting-seven-top-left {
+            0% {
+                transform: translate(calc(100vw + 100px), -100px) rotate(0deg);
+                opacity: var(--shooting-seven-intensity);
+            }
+            100% {
+                transform: translate(-100px, calc(100vh + 100px)) rotate(-720deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes shooting-seven-bottom-right {
+            0% {
+                transform: translate(-100px, calc(100vh + 100px)) rotate(0deg);
+                opacity: var(--shooting-seven-intensity);
+            }
+            100% {
+                transform: translate(calc(100vw + 100px), -100px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes shooting-seven-bottom-left {
+            0% {
+                transform: translate(calc(100vw + 100px), calc(100vh + 100px)) rotate(0deg);
+                opacity: var(--shooting-seven-intensity);
+            }
+            100% {
+                transform: translate(-100px, -100px) rotate(-720deg);
                 opacity: 0;
             }
         }
@@ -590,7 +633,6 @@
     </footer>
 
     <script>
-        // Create background of floating 7s
         const starsContainer = document.getElementById('stars');
         const numberOfSevens = 50;
 
@@ -601,7 +643,6 @@
             seven.style.left = `${Math.random() * 100}%`;
             seven.style.top = `${Math.random() * 100}%`;
             
-            // Random animation duration and delay for floating effect
             const duration = 3 + Math.random() * 4;
             const delay = Math.random() * 2;
             seven.style.animation = `
@@ -612,39 +653,34 @@
             starsContainer.appendChild(seven);
         }
 
-        // Create shooting 7s with physics-like motion
         function createShootingSeven() {
             const shootingSeven = document.createElement('span');
             shootingSeven.className = 'shooting-seven';
             shootingSeven.textContent = '7';
             
-            // Random side selection (0: right, 1: left, 2: top, 3: bottom)
-            const side = Math.floor(Math.random() * 4);
+            const side = Math.floor(Math.random() * 8);
             const duration = 2 + Math.random() * 2;
             
-            // Physics parameters
-            const startY = Math.random() * 50; // Starting Y position percentage
-            const startX = Math.random() * 100; // Starting X position percentage
-            const endOffset = (Math.random() - 0.5) * 300; // Random ending offset
+            const startY = Math.random() * 50;
+            const startX = Math.random() * 100;
+            const endOffset = (Math.random() - 0.5) * 300;
             
             shootingSeven.style.setProperty('--start-y', `${startY}vh`);
             shootingSeven.style.setProperty('--start-x', `${startX}vw`);
             shootingSeven.style.setProperty('--end-offset', `${endOffset}px`);
             
-            switch(side) {
-                case 0:
-                    shootingSeven.style.animation = `shooting-seven-right ${duration}s cubic-bezier(0.25, 0.1, 0.25, 1) forwards`;
-                    break;
-                case 1:
-                    shootingSeven.style.animation = `shooting-seven-left ${duration}s cubic-bezier(0.25, 0.1, 0.25, 1) forwards`;
-                    break;
-                case 2:
-                    shootingSeven.style.animation = `shooting-seven-top ${duration}s cubic-bezier(0.25, 0.1, 0.25, 1) forwards`;
-                    break;
-                case 3:
-                    shootingSeven.style.animation = `shooting-seven-bottom ${duration}s cubic-bezier(0.25, 0.1, 0.25, 1) forwards`;
-                    break;
-            }
+            const animations = [
+                'shooting-seven-right',
+                'shooting-seven-left',
+                'shooting-seven-top',
+                'shooting-seven-bottom',
+                'shooting-seven-top-right',
+                'shooting-seven-top-left',
+                'shooting-seven-bottom-right',
+                'shooting-seven-bottom-left'
+            ];
+            
+            shootingSeven.style.animation = `${animations[side]} ${duration}s cubic-bezier(0.25, 0.1, 0.25, 1) forwards`;
             
             starsContainer.appendChild(shootingSeven);
 
@@ -653,7 +689,6 @@
             }, duration * 1000);
         }
 
-        // Create shooting 7s at random intervals
         function scheduleNextSeven() {
             const baseInterval = parseFloat(getComputedStyle(document.documentElement)
                 .getPropertyValue('--shooting-seven-frequency'));
@@ -667,7 +702,6 @@
         scheduleNextSeven();
         setTimeout(() => createShootingSeven(), 1000);
 
-        // Bio dropdown functionality
         const bioButton = document.querySelector('.bio-button');
         const bioContent = document.querySelector('.bio-content');
 
@@ -676,12 +710,10 @@
             bioContent.classList.toggle('active');
         });
 
-        // Visit counter functionality
         function updateVisitCount(response) {
             document.getElementById('visits').textContent = response.value;
         }
 
-        // Load the visit count
         fetch('https://api.countapi.xyz/hit/7eventy7.github.io/visits')
             .then(response => response.json())
             .then(response => {
