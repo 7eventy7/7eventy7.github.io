@@ -5,17 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>7eventy7</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rowdies:wght@700&family=DM+Sans:wght@400;500&family=JetBrains+Mono:wght@400&display=swap');
+
+        :root {
+            /* Content Configuration */
+            --subtitle-text: "call-me-7";
+            --footer-text: "// lucky numbers only //";
+            
+            /* Animation Timings */
+            --hover-animation-speed: 0.5s;
+            --hover-out-speed: 0.25s;
+            
+            /* Layout Sizes */
+            --content-max-width: 600px;
+            --avatar-size: 128px;
+            --social-button-size: 90px;
+            --social-icon-size: 60px;
+            --button-height: 3.5rem;
+            --avatar-glow-size: 140px;
+            --avatar-glow-opacity: 0.3;
+            --shooting-star-size: 80px;
+            
+            /* Colors */
+            --color-background-start: #2a1f3d;
+            --color-background-end: #1a1625;
+            --color-text-primary: #ffffff;
+            --color-text-secondary: #a8a8a8;
+            --color-button-bg: rgba(77, 64, 97, 0.301);
+            --color-button-hover: rgba(201, 131, 215, 0.2);
+            --color-button-shadow: rgba(0, 0, 0, 0.2);
+            --color-sheen: #bf65f796;
+            --color-footer: rgba(255, 255, 255, 0.1);
+            --color-bio-bg: rgba(77, 64, 97, 0.4);
+            --color-avatar-glow: rgba(151, 104, 180, 0.636);
+            
+            /* Seven Animation Variables */
+            --seven-color: rgba(92, 66, 106, 0.6);
+            --seven-glow: rgba(151, 104, 180, 0.3);
+            --seven-size: 24px;
+            --seven-background-intensity: 0.6;
+            --shooting-seven-size: 32px;
+            --shooting-seven-color: #822f7d;
+            --shooting-seven-glow: rgba(151, 104, 180, 0.8);
+            --shooting-seven-frequency: 4000;
+            --shooting-seven-speed: 3s;
+            --shooting-seven-intensity: 1;
+            
+            /* Fonts */
+            --font-title: 'Rowdies', cursive;
+            --font-subtitle: 'DM Sans', sans-serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            
+            /* Font Sizes */
+            --font-size-title: 2.75rem;
+            --font-size-subtitle: 1.1rem;
+            --font-size-button: 1rem;
+            --font-size-footer: 0.875rem;
+            --font-size-bio: 0.95rem;
+            --font-size-metrics: 0.9rem;
+            
+            /* Animation */
+            --transition-bounce: cubic-bezier(0.4, 0, 0.2, 1);
+            --hover-lift-distance: -4px;
+            --hover-scale: 1.15;
+        }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
         }
 
         body {
-            background: linear-gradient(135deg, #2a1f3d 0%, #1a1625 100%);
+            background: linear-gradient(135deg, var(--color-background-start) 0%, var(--color-background-end) 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -23,6 +86,8 @@
             padding: 2rem;
             position: relative;
             overflow: hidden;
+            font-family: var(--font-body);
+            line-height: 1.5;
         }
 
         .stars {
@@ -31,12 +96,104 @@
             height: 100%;
             z-index: 0;
             pointer-events: none;
+            overflow: hidden;
+        }
+
+        .seven {
+            position: absolute;
+            color: var(--seven-color);
+            font-family: var(--font-title);
+            font-size: var(--seven-size);
+            text-shadow: 0 0 10px var(--seven-glow);
+            user-select: none;
+            opacity: calc(var(--seven-background-intensity) * 0.6);
+            will-change: transform;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-15px) rotate(5deg);
+            }
+            75% {
+                transform: translateY(15px) rotate(-5deg);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                opacity: calc(var(--seven-background-intensity) * 0.6); 
+            }
+            50% { 
+                opacity: calc(var(--seven-background-intensity) * 0.2); 
+            }
+        }
+
+        .shooting-seven {
+            position: absolute;
+            color: var(--shooting-seven-color);
+            font-family: var(--font-title);
+            font-size: var(--shooting-seven-size);
+            text-shadow: 
+                0 0 20px var(--shooting-seven-glow),
+                0 0 40px var(--shooting-seven-glow),
+                0 0 60px var(--shooting-seven-glow);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1;
+            will-change: transform;
+        }
+
+        @keyframes shooting-seven-right {
+            0% {
+                transform: translate(-100px, var(--start-y)) rotate(0deg);
+                opacity: var(--shooting-seven-intensity);
+            }
+            100% {
+                transform: translate(calc(100vw + 100px), calc(var(--start-y) + var(--end-offset))) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes shooting-seven-left {
+            0% {
+                transform: translate(calc(100vw + 100px), var(--start-y)) rotate(0deg);
+                opacity: var(--shooting-seven-intensity);
+            }
+            100% {
+                transform: translate(-100px, calc(var(--start-y) + var(--end-offset))) rotate(-720deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes shooting-seven-top {
+            0% {
+                transform: translate(var(--start-x), -100px) rotate(0deg);
+                opacity: var(--shooting-seven-intensity);
+            }
+            100% {
+                transform: translate(calc(var(--start-x) + var(--end-offset)), calc(100vh + 100px)) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes shooting-seven-bottom {
+            0% {
+                transform: translate(var(--start-x), calc(100vh + 100px)) rotate(0deg);
+                opacity: var(--shooting-seven-intensity);
+            }
+            100% {
+                transform: translate(calc(var(--start-x) + var(--end-offset)), -100px) rotate(-360deg);
+                opacity: 0;
+            }
         }
 
         .content {
             z-index: 1;
             width: 100%;
-            max-width: 600px;
+            max-width: var(--content-max-width);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -46,98 +203,314 @@
         .header {
             text-align: center;
             margin-bottom: 1rem;
+            width: 100%;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: var(--avatar-size);
+            height: var(--avatar-size);
+            margin: 0 auto 1rem;
+            cursor: pointer;
+            display: block;
+        }
+
+        .avatar-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: var(--avatar-glow-size);
+            height: var(--avatar-glow-size);
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, var(--color-avatar-glow) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: var(--avatar-glow-opacity);
+            transition: opacity var(--hover-animation-speed) var(--transition-bounce);
+        }
+
+        .avatar-container:hover::before {
+            opacity: 0.5;
         }
 
         .avatar {
-            width: 128px;
-            height: 128px;
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
-            margin-bottom: 1rem;
+            transition: transform var(--hover-animation-speed) var(--transition-bounce);
+        }
+
+        .avatar-container:hover .avatar {
+            transform: scale(1.05);
         }
 
         .username {
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 600;
+            color: var(--color-text-primary);
+            font-family: var(--font-title);
+            font-size: var(--font-size-title);
+            font-weight: 300;
             margin-bottom: 0.25rem;
+            letter-spacing: -0.02em;
+            text-shadow: 0 2px 10px rgba(156, 77, 204, 0.3);
+        }
+
+        .subtitle-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+            min-height: 2.5rem;
         }
 
         .subtitle {
-            color: #a8a8a8;
-            font-size: 1rem;
+            color: var(--color-text-secondary);
+            font-family: var(--font-subtitle);
+            font-size: var(--font-size-subtitle);
+            font-weight: 500;
+            opacity: 0;
+            animation: fadeIn 0.8s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .bio-button {
+            background: var(--color-button-bg);
+            color: var(--color-text-primary);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-family: var(--font-subtitle);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all var(--hover-animation-speed) var(--transition-bounce);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .bio-button:hover {
+            background: var(--color-button-hover);
+            transform: translateY(var(--hover-lift-distance));
+        }
+
+        .bio-button::after {
+            content: '▼';
+            font-size: 0.8em;
+            transition: transform var(--hover-animation-speed) var(--transition-bounce);
+        }
+
+        .bio-button.active::after {
+            transform: rotate(180deg);
+        }
+
+        .bio-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, opacity 0.3s ease-out, transform 0.3s ease-out;
+            opacity: 0;
+            transform: translateY(-10px);
+            background: var(--color-bio-bg);
+            border-radius: 12px;
+            width: 100%;
+        }
+
+        .bio-content.active {
+            max-height: 500px;
+            opacity: 1;
+            transform: translateY(0);
+            padding: 1.25rem;
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-bio);
+            line-height: 1.6;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .metrics {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            font-family: var(--font-mono);
+            font-size: var(--font-size-metrics);
+            color: var(--color-text-secondary);
+            margin-top: 1rem;
+        }
+
+        .metric {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .metric-value {
+            color: var(--color-text-primary);
+            font-weight: 500;
         }
 
         .social-buttons {
             display: flex;
-            gap: 1rem;
+            gap: 1.25rem;
             margin-bottom: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .social-button {
-            width: 40px;
-            height: 40px;
+            width: var(--social-button-size);
+            height: var(--social-button-size);
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--color-button-bg);
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.2s, background-color 0.2s;
+            transition: transform var(--hover-animation-speed) var(--transition-bounce),
+                        background-color var(--hover-out-speed) ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .social-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--color-sheen), transparent);
+            opacity: 0;
+            transition: opacity var(--hover-out-speed) ease;
+            pointer-events: none;
         }
 
         .social-button:hover {
-            transform: translateY(-2px);
-            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(var(--hover-lift-distance));
+            background: var(--color-button-hover);
+            box-shadow: 0 4px 12px var(--color-button-shadow);
+        }
+
+        .social-button:hover::after {
+            opacity: 1;
+            animation: sheen 0.6s forwards;
+        }
+
+        @keyframes sheen {
+            from { transform: translateX(0); }
+            to { transform: translateX(50%); }
         }
 
         .social-button img {
-            width: 24px;
-            height: 24px;
+            width: var(--social-icon-size);
+            height: var(--social-icon-size);
+            transition: transform var(--hover-animation-speed) ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .social-button:hover img {
+            transform: scale(var(--hover-scale));
         }
 
         .long-button {
             width: 100%;
-            padding: 1rem;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
+            height: var(--button-height);
+            padding: 0 1.5rem;
+            border-radius: 12px;
+            background: var(--color-button-bg);
+            color: var(--color-text-primary);
             text-decoration: none;
             display: flex;
             align-items: center;
             gap: 1rem;
-            transition: transform 0.2s, background-color 0.2s;
+            font-family: var(--font-body);
+            font-weight: 500;
+            font-size: var(--font-size-button);
+            transition: transform var(--hover-animation-speed) var(--transition-bounce),
+                        background-color var(--hover-out-speed) ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .long-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--color-sheen), transparent);
+            opacity: 0;
+            transition: opacity var(--hover-out-speed) ease;
+            pointer-events: none;
         }
 
         .long-button:hover {
-            transform: translateY(-2px);
-            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(var(--hover-lift-distance));
+            background: var(--color-button-hover);
+            box-shadow: 0 4px 12px var(--color-button-shadow);
+        }
+
+        .long-button:hover::after {
+            opacity: 1;
+            animation: sheen 0.6s forwards;
         }
 
         .long-button img {
             width: 24px;
             height: 24px;
+            transition: transform var(--hover-animation-speed) ease;
+        }
+
+        .long-button:hover img {
+            transform: scale(1.1);
         }
 
         .support-button {
             margin-top: 2rem;
-            background: linear-gradient(135deg, #9c4dcc 0%, #7c3aad 100%);
+            background: var(--color-button-bg);
+            font-weight: 600;
+            justify-content: center;
         }
 
         .support-button:hover {
-            background: linear-gradient(135deg, #af5ee3 0%, #8f44c8 100%);
+            background: var(--color-button-hover);
+            box-shadow: 0 4px 12px var(--color-button-shadow);
         }
 
-        /* Stars animation */
-        @keyframes twinkle {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
+        .footer {
+            position: fixed;
+            bottom: 1rem;
+            color: var(--color-footer);
+            font-family: var(--font-subtitle);
+            font-size: var(--font-size-footer);
+            opacity: 0.5;
+            text-align: center;
         }
 
-        .star {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: white;
-            border-radius: 50%;
+        @media (max-width: 600px) {
+            .social-buttons {
+                gap: 1rem;
+            }
+            
+            :root {
+                --social-button-size: 80px;
+                --social-icon-size: 50px;
+            }
+
+            .subtitle-container {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .metrics {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.75rem;
+            }
         }
     </style>
 </head>
@@ -145,9 +518,17 @@
     <div class="stars" id="stars"></div>
     <div class="content">
         <div class="header">
-            <img src="/images/avatar" alt="7eventy7" class="avatar">
+            <a href="https://shattereddisk.github.io/rickroll/rickroll.mp4" class="avatar-container" target="_blank">
+                <img src="/images/avatar/avatar.png" alt="7eventy7" class="avatar">
+            </a>
             <h1 class="username">7eventy7</h1>
-            <p class="subtitle">call-me-7</p>
+            <div class="subtitle-container">
+                <p class="subtitle">call-me-7</p>
+                <button class="bio-button">About Me</button>
+            </div>
+            <div class="bio-content">
+                I'm a creative soul and a tech tinkerer with a penchant for pixel art, game modding, and all things open source. When I'm not buried in tech projects, I'm likely cooking up something new, playing video games, or organizing my growing lighter collection from different countries. I've traveled all over the world, and absolutely love to visit brand new places that interest me. As a devout Pastafarian, I believe in noodling around and never taking life too seriously.
+            </div>
         </div>
 
         <div class="social-buttons">
@@ -164,16 +545,16 @@
                 <img src="/images/buttons/steam.png" alt="Steam">
             </a>
             <a href="https://x.com/7eventy7_" class="social-button" target="_blank">
-                <img src="/images/buttons/x.png" alt="X">
+                <img src="/images/buttons/twitter.png" alt="X">
             </a>
         </div>
 
         <a href="https://steamcommunity.com/tradeoffer/new/?partner=141953496&token=ngHnE4cQ" class="long-button" target="_blank">
-            <img src="/images/icons/trade.png" alt="Steam Trade">
+            <img src="/images/icons/tradeoffer.png" alt="Steam Trade">
             STEAM TRADE OFFER
         </a>
         <a href="https://www.planetminecraft.com/member/7eventy7/" class="long-button" target="_blank">
-            <img src="/images/icons/minecraft.png" alt="Planet Minecraft">
+            <img src="/images/icons/planetminecraft.png" alt="Planet Minecraft">
             PLANET MINECRAFT
         </a>
         <a href="https://legacy.curseforge.com/members/77eventy/projects" class="long-button" target="_blank">
@@ -181,7 +562,7 @@
             CURSEFORGE
         </a>
         <a href="https://www.nexusmods.com/users/93284833?tab=user+files" class="long-button" target="_blank">
-            <img src="/images/icons/nexus.png" alt="Nexus Mods">
+            <img src="/images/icons/nexusmods.png" alt="Nexus Mods">
             NEXUS MODS
         </a>
         <a href="https://modrinth.com/user/7eventy7" class="long-button" target="_blank">
@@ -190,24 +571,111 @@
         </a>
 
         <a href="https://ko-fi.com/7eventy7" class="long-button support-button" target="_blank">
-            <img src="/images/icons/kofi.png" alt="Ko-fi">
-            SUPPORT MY WORK 💜
+            SUPPORT MY WORK ON KOFI 💜
         </a>
+
+        <div class="metrics">
+            <div class="metric">
+                <span>Site Visits:</span>
+                <span class="metric-value">0</span>
+            </div>
+            <div class="metric">
+                <span>Link Visits:</span>
+                <span class="metric-value">0</span>
+            </div>
+        </div>
     </div>
 
-    <script>
-        // Create starry background
-        const starsContainer = document.getElementById('stars');
-        const numberOfStars = 100;
+    <footer class="footer">
+        // lucky numbers only //
+    </footer>
 
-        for (let i = 0; i < numberOfStars; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.left = `${Math.random() * 100}%`;
-            star.style.top = `${Math.random() * 100}%`;
-            star.style.animation = `twinkle ${2 + Math.random() * 3}s infinite ${Math.random() * 2}s`;
-            starsContainer.appendChild(star);
+    <script>
+        // Create background of floating 7s
+        const starsContainer = document.getElementById('stars');
+        const numberOfSevens = 50;
+
+        for (let i = 0; i < numberOfSevens; i++) {
+            const seven = document.createElement('span');
+            seven.className = 'seven';
+            seven.textContent = '7';
+            seven.style.left = `${Math.random() * 100}%`;
+            seven.style.top = `${Math.random() * 100}%`;
+            
+            // Random animation duration and delay for floating effect
+            const duration = 3 + Math.random() * 4;
+            const delay = Math.random() * 2;
+            seven.style.animation = `
+                float ${duration}s ease-in-out infinite ${delay}s,
+                pulse ${duration * 0.8}s ease-in-out infinite ${delay}s
+            `;
+            
+            starsContainer.appendChild(seven);
         }
+
+        // Create shooting 7s with physics-like motion
+        function createShootingSeven() {
+            const shootingSeven = document.createElement('span');
+            shootingSeven.className = 'shooting-seven';
+            shootingSeven.textContent = '7';
+            
+            // Random side selection (0: right, 1: left, 2: top, 3: bottom)
+            const side = Math.floor(Math.random() * 4);
+            const duration = 2 + Math.random() * 2;
+            
+            // Physics parameters
+            const startY = Math.random() * 50; // Starting Y position percentage
+            const startX = Math.random() * 100; // Starting X position percentage
+            const endOffset = (Math.random() - 0.5) * 300; // Random ending offset
+            
+            shootingSeven.style.setProperty('--start-y', `${startY}vh`);
+            shootingSeven.style.setProperty('--start-x', `${startX}vw`);
+            shootingSeven.style.setProperty('--end-offset', `${endOffset}px`);
+            
+            switch(side) {
+                case 0:
+                    shootingSeven.style.animation = `shooting-seven-right ${duration}s cubic-bezier(0.25, 0.1, 0.25, 1) forwards`;
+                    break;
+                case 1:
+                    shootingSeven.style.animation = `shooting-seven-left ${duration}s cubic-bezier(0.25, 0.1, 0.25, 1) forwards`;
+                    break;
+                case 2:
+                    shootingSeven.style.animation = `shooting-seven-top ${duration}s cubic-bezier(0.25, 0.1, 0.25, 1) forwards`;
+                    break;
+                case 3:
+                    shootingSeven.style.animation = `shooting-seven-bottom ${duration}s cubic-bezier(0.25, 0.1, 0.25, 1) forwards`;
+                    break;
+            }
+            
+            starsContainer.appendChild(shootingSeven);
+
+            setTimeout(() => {
+                shootingSeven.remove();
+            }, duration * 1000);
+        }
+
+        // Create shooting 7s at random intervals
+        function scheduleNextSeven() {
+            const baseInterval = parseFloat(getComputedStyle(document.documentElement)
+                .getPropertyValue('--shooting-seven-frequency'));
+            const randomDelay = baseInterval * (0.5 + Math.random());
+            setTimeout(() => {
+                createShootingSeven();
+                scheduleNextSeven();
+            }, randomDelay);
+        }
+
+        scheduleNextSeven();
+        setTimeout(() => createShootingSeven(), 1000);
+
+        // Bio dropdown functionality
+        const bioButton = document.querySelector('.bio-button');
+        const bioContent = document.querySelector('.bio-content');
+
+        bioButton.addEventListener('click', () => {
+            bioButton.classList.toggle('active');
+            bioContent.classList.toggle('active');
+        });
     </script>
 </body>
 </html>
