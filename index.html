@@ -631,15 +631,26 @@
         }
 
         .support-button {
-            margin-top: 2rem;
             background: var(--color-button-bg);
             font-weight: 600;
             justify-content: center;
         }
 
+        .support-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+
         .support-button:hover {
             background: var(--color-button-hover);
             box-shadow: 0 4px 12px var(--color-button-shadow);
+        }
+
+        .paw-icon {
+            flex-shrink: 0;
         }
 
         .footer {
@@ -1059,9 +1070,22 @@
             </a>
         </div>
 
-        <a href="https://ko-fi.com/7eventy7" class="long-button support-button" target="_blank">
-            SUPPORT MY WORK ON KOFI 🤍
-        </a>
+        <div class="support-buttons">
+            <a href="https://vsona.vgen.co/garnett-bryevurn" class="long-button support-button" target="_blank">
+                CHECK OUT MY FURSONA
+                <svg class="paw-icon" width="22" height="22" viewBox="0 0 24 24" fill="#ffffff" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="12" cy="16.5" rx="6" ry="5"/>
+                    <ellipse cx="4.8" cy="8.5" rx="2.3" ry="3.1" transform="rotate(-20 4.8 8.5)"/>
+                    <ellipse cx="10.2" cy="4.8" rx="2.2" ry="3"/>
+                    <ellipse cx="15.8" cy="4.8" rx="2.2" ry="3"/>
+                    <ellipse cx="19.2" cy="8.5" rx="2.3" ry="3.1" transform="rotate(20 19.2 8.5)"/>
+                </svg>
+            </a>
+
+            <a href="https://ko-fi.com/7eventy7" class="long-button support-button" target="_blank">
+                SUPPORT MY WORK ON KOFI 🤍
+            </a>
+        </div>
 
     <footer class="footer">
         // lucky numbers only //
