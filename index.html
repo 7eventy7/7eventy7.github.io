@@ -802,6 +802,14 @@
             const root = document.documentElement;
             for (const [prop, value] of Object.entries(theme.vars)) {
                 root.style.setProperty(prop, value);
+                // Also set directly on <body> once it exists. The body's
+                // gradient background (background-attachment: fixed) can be
+                // painted from the stylesheet default before it picks up an
+                // inherited custom-property change from <html> that happened
+                // before <body> existed — setting it here too closes that gap.
+                if (document.body) {
+                    document.body.style.setProperty(prop, value);
+                }
             }
             currentThemeIndex = index;
         }
@@ -822,6 +830,7 @@
     </script>
 </head>
 <body>
+    <script>applyTheme(currentThemeIndex);</script>
     <div class="stars" id="stars"></div>
     <div class="content">
         <div class="header">
