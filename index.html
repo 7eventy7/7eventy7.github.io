@@ -824,6 +824,17 @@
 
         let currentThemeIndex = -1;
 
+        // Map theme name -> its index in `themes`, so the cycle order below
+        // can just be a list of names.
+        const themeIndexByName = {};
+        themes.forEach((t, i) => { themeIndexByName[t.name] = i; });
+
+        // A hand-picked order for clicking through themes, chosen so that
+        // hues which blend together (green teal/emerald, blue purple/azure,
+        // yellow gold/amber) are never adjacent — unlike pure randomness,
+        // which can land on two similar colors back-to-back.
+        const themeCycleOrder = ['gold', 'azure', 'crimson', 'emerald', 'purple', 'amber', 'teal', 'magenta'];
+
         function applyTheme(index) {
             const theme = themes[index];
             const root = document.documentElement;
@@ -844,6 +855,8 @@
             currentThemeIndex = index;
         }
 
+        // Used only for the very first paint (page load/refresh) — a genuine
+        // random pick across all themes.
         function randomizeTheme() {
             if (themes.length <= 1) return;
             let nextIndex;
@@ -851,6 +864,15 @@
                 nextIndex = Math.floor(Math.random() * themes.length);
             } while (nextIndex === currentThemeIndex);
             applyTheme(nextIndex);
+        }
+
+        // Used when the person clicks the avatar — steps through the
+        // curated order above instead of picking randomly.
+        function nextTheme() {
+            const currentName = themes[currentThemeIndex].name;
+            const pos = themeCycleOrder.indexOf(currentName);
+            const nextPos = (pos + 1) % themeCycleOrder.length;
+            applyTheme(themeIndexByName[themeCycleOrder[nextPos]]);
         }
 
         // Pick a random theme right now, before <body> (and the avatar image)
@@ -1017,19 +1039,19 @@
             bioContent.classList.toggle('active');
         });
 
-        // Clicking (or pressing Enter/Space on) the avatar now randomizes
-        // the color theme instead of opening a link. applyTheme/randomizeTheme
-        // are already defined in the early <head> script.
+        // Clicking (or pressing Enter/Space on) the avatar steps to the next
+        // color theme in the curated order, instead of opening a link.
+        // applyTheme/nextTheme are already defined in the early <head> script.
         const avatarContainer = document.getElementById('avatarContainer');
 
         avatarContainer.addEventListener('click', () => {
-            randomizeTheme();
+            nextTheme();
         });
 
         avatarContainer.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                randomizeTheme();
+                nextTheme();
             }
         });
     </script>
