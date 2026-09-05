@@ -512,6 +512,13 @@
             gap: 1rem;
         }
 
+        /* Left column (1st, 3rd, 5th... items): mirror the right column —
+           icon on the right, content anchored toward the inner edge next
+           to the gap. Right column keeps its original icon-left styling. */
+        .long-buttons-grid .long-button:nth-child(odd) {
+            flex-direction: row-reverse;
+        }
+
         .long-button::after {
             content: '';
             position: absolute;
@@ -925,7 +932,7 @@
         </div>
 
         <a href="https://ko-fi.com/7eventy7" class="long-button support-button" target="_blank">
-            SUPPORT MY WORK ON KOFI 💜
+            SUPPORT MY WORK ON KOFI 🤍
         </a>
 
     <footer class="footer">
