@@ -73,7 +73,7 @@
                 --icon-filter-github: grayscale(1) sepia(1) saturate(4) hue-rotate(242deg) brightness(0.85);
                 --icon-filter-steam: grayscale(1) sepia(1) saturate(4) hue-rotate(254deg) brightness(0.85);
             }
-            
+
         * {
             margin: 0;
             padding: 0;
@@ -137,11 +137,11 @@
         }
 
         @keyframes pulse {
-            0%, 100% { 
-                opacity: calc(var(--seven-background-intensity) * 0.6); 
+            0%, 100% {
+                opacity: calc(var(--seven-background-intensity) * 0.6);
             }
-            50% { 
-                opacity: calc(var(--seven-background-intensity) * 0.2); 
+            50% {
+                opacity: calc(var(--seven-background-intensity) * 0.2);
             }
         }
 
@@ -150,7 +150,7 @@
             color: var(--shooting-seven-color);
             font-family: var(--font-title);
             font-size: var(--shooting-seven-size);
-            text-shadow: 
+            text-shadow:
                 0 0 20px var(--shooting-seven-glow),
                 0 0 40px var(--shooting-seven-glow),
                 0 0 60px var(--shooting-seven-glow);
@@ -437,6 +437,20 @@
             overflow: hidden;
         }
 
+        .social-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: var(--social-icon-size);
+            height: var(--social-icon-size);
+            border-radius: 50%;
+            background: #ffffff;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
         .social-button::after {
             content: '';
             position: absolute;
@@ -448,6 +462,7 @@
             opacity: 0;
             transition: opacity var(--hover-out-speed) ease;
             pointer-events: none;
+            z-index: 2;
         }
 
         .social-button:hover {
@@ -472,7 +487,7 @@
             transition: transform var(--hover-animation-speed) ease,
                         filter var(--theme-transition-speed) ease;
             position: relative;
-            z-index: 2;
+            z-index: 3;
         }
 
         .social-buttons .social-button:nth-child(1) img { filter: var(--icon-filter-discord); }
@@ -597,7 +612,7 @@
             .social-buttons {
                 gap: 1rem;
             }
-            
+
             :root {
                 --social-button-size: 80px;
                 --social-icon-size: 50px;
@@ -971,14 +986,14 @@
             seven.textContent = '7';
             seven.style.left = `${Math.random() * 100}%`;
             seven.style.top = `${Math.random() * 100}%`;
-            
+
             const duration = 3 + Math.random() * 4;
             const delay = Math.random() * 2;
             seven.style.animation = `
                 float ${duration}s ease-in-out infinite ${delay}s,
                 pulse ${duration * 0.8}s ease-in-out infinite ${delay}s
             `;
-            
+
             starsContainer.appendChild(seven);
         }
 
@@ -986,18 +1001,18 @@
             const shootingSeven = document.createElement('span');
             shootingSeven.className = 'shooting-seven';
             shootingSeven.textContent = '7';
-            
+
             const side = Math.floor(Math.random() * 8);
             const duration = 2 + Math.random() * 2;
-            
+
             const startY = Math.random() * 50;
             const startX = Math.random() * 100;
             const endOffset = (Math.random() - 0.5) * 300;
-            
+
             shootingSeven.style.setProperty('--start-y', `${startY}vh`);
             shootingSeven.style.setProperty('--start-x', `${startX}vw`);
             shootingSeven.style.setProperty('--end-offset', `${endOffset}px`);
-            
+
             const animations = [
                 'shooting-seven-right',
                 'shooting-seven-left',
@@ -1008,9 +1023,9 @@
                 'shooting-seven-bottom-right',
                 'shooting-seven-bottom-left'
             ];
-            
+
             shootingSeven.style.animation = `${animations[side]} ${duration}s cubic-bezier(0.25, 0.1, 0.25, 1) forwards`;
-            
+
             starsContainer.appendChild(shootingSeven);
 
             setTimeout(() => {
