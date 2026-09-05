@@ -64,8 +64,14 @@
                 --shooting-seven-intensity: 3;
 
                 --color-title-glow: rgba(156, 77, 204, 0.3);
-                --avatar-filter: none;
+                --avatar-filter: sepia(1) saturate(4) hue-rotate(230deg) brightness(0.85);
                 --theme-transition-speed: 0.8s;
+
+                --icon-filter-discord: grayscale(1) sepia(1) saturate(4) hue-rotate(206deg) brightness(0.85);
+                --icon-filter-reddit: grayscale(1) sepia(1) saturate(4) hue-rotate(218deg) brightness(0.85);
+                --icon-filter-bluesky: grayscale(1) sepia(1) saturate(4) hue-rotate(230deg) brightness(0.85);
+                --icon-filter-github: grayscale(1) sepia(1) saturate(4) hue-rotate(242deg) brightness(0.85);
+                --icon-filter-steam: grayscale(1) sepia(1) saturate(4) hue-rotate(254deg) brightness(0.85);
             }
             
         * {
@@ -93,57 +99,6 @@
             -webkit-overflow-scrolling: touch;
             position: relative;
             transition: background var(--theme-transition-speed) ease;
-        }
-
-        .theme-switcher {
-            position: fixed;
-            top: 1.25rem;
-            right: 1.25rem;
-            width: 3rem;
-            height: 3rem;
-            border-radius: 50%;
-            border: none;
-            background: var(--color-button-bg);
-            color: var(--color-text-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            cursor: pointer;
-            z-index: 10;
-            backdrop-filter: blur(4px);
-            transition: transform var(--hover-animation-speed) var(--transition-bounce),
-                        background-color var(--hover-out-speed) ease,
-                        box-shadow var(--hover-out-speed) ease;
-        }
-
-        .theme-switcher:hover {
-            background: var(--color-button-hover);
-            box-shadow: 0 4px 12px var(--color-button-shadow);
-            transform: translateY(var(--hover-lift-distance)) rotate(20deg);
-        }
-
-        .theme-switcher:active {
-            transform: scale(0.9) rotate(20deg);
-        }
-
-        .theme-switcher.spinning {
-            animation: theme-spin 0.5s var(--transition-bounce);
-        }
-
-        @keyframes theme-spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(180deg); }
-        }
-
-        @media (max-width: 600px) {
-            .theme-switcher {
-                top: 0.75rem;
-                right: 0.75rem;
-                width: 2.5rem;
-                height: 2.5rem;
-                font-size: 1.1rem;
-            }
         }
 
         .stars {
@@ -514,10 +469,17 @@
         .social-button img {
             width: var(--social-icon-size);
             height: var(--social-icon-size);
-            transition: transform var(--hover-animation-speed) ease;
+            transition: transform var(--hover-animation-speed) ease,
+                        filter var(--theme-transition-speed) ease;
             position: relative;
             z-index: 2;
         }
+
+        .social-buttons .social-button:nth-child(1) img { filter: var(--icon-filter-discord); }
+        .social-buttons .social-button:nth-child(2) img { filter: var(--icon-filter-reddit); }
+        .social-buttons .social-button:nth-child(3) img { filter: var(--icon-filter-bluesky); }
+        .social-buttons .social-button:nth-child(4) img { filter: var(--icon-filter-github); }
+        .social-buttons .social-button:nth-child(5) img { filter: var(--icon-filter-steam); }
 
         .social-button:hover img {
             transform: scale(var(--hover-scale));
@@ -637,15 +599,235 @@
             }
         }
     </style>
+    <script>
+        // ---- Color theme engine ----
+        // Runs immediately (before <body> is parsed) so the very first paint
+        // already has a random theme applied — no flash of default purple,
+        // and no flash of the plain grayscale avatar/icons.
+        //
+        // The avatar and the 5 social icons are expected to be flat grayscale
+        // source images. Each theme tints them via CSS filter (sepia + hue-rotate)
+        // rather than needing separate colored image files per theme.
+        const themes = [
+            {
+                name: 'purple',
+                vars: {
+                    '--color-background-start': '#2a1f3d',
+                    '--color-background-end': '#1a1625',
+                    '--color-button-bg': 'rgba(77, 64, 97, 0.301)',
+                    '--color-bio-bg': 'rgba(77, 64, 97, 0.4)',
+                    '--color-button-hover': 'rgba(201, 131, 215, 0.2)',
+                    '--color-sheen': '#bf65f796',
+                    '--color-avatar-glow': 'rgba(151, 104, 180, 0.636)',
+                    '--seven-color': 'rgba(92, 66, 106, 0.6)',
+                    '--seven-glow': 'rgba(151, 104, 180, 0.3)',
+                    '--shooting-seven-color': '#822f7d',
+                    '--shooting-seven-glow': 'rgba(151, 104, 180, 0.8)',
+                    '--color-title-glow': 'rgba(156, 77, 204, 0.3)',
+                    '--avatar-filter': 'sepia(1) saturate(4) hue-rotate(230deg) brightness(0.85)',
+                    '--icon-filter-discord': 'grayscale(1) sepia(1) saturate(4) hue-rotate(206deg) brightness(0.85)',
+                    '--icon-filter-reddit': 'grayscale(1) sepia(1) saturate(4) hue-rotate(218deg) brightness(0.85)',
+                    '--icon-filter-bluesky': 'grayscale(1) sepia(1) saturate(4) hue-rotate(230deg) brightness(0.85)',
+                    '--icon-filter-github': 'grayscale(1) sepia(1) saturate(4) hue-rotate(242deg) brightness(0.85)',
+                    '--icon-filter-steam': 'grayscale(1) sepia(1) saturate(4) hue-rotate(254deg) brightness(0.85)'
+                }
+            },
+            {
+                name: 'teal',
+                vars: {
+                    '--color-background-start': '#1f3a3d',
+                    '--color-background-end': '#16262a',
+                    '--color-button-bg': 'rgba(64, 97, 95, 0.301)',
+                    '--color-bio-bg': 'rgba(64, 97, 95, 0.4)',
+                    '--color-button-hover': 'rgba(131, 215, 201, 0.2)',
+                    '--color-sheen': '#65f7d796',
+                    '--color-avatar-glow': 'rgba(104, 180, 170, 0.636)',
+                    '--seven-color': 'rgba(66, 106, 102, 0.6)',
+                    '--seven-glow': 'rgba(104, 180, 170, 0.3)',
+                    '--shooting-seven-color': '#2f827a',
+                    '--shooting-seven-glow': 'rgba(104, 180, 170, 0.8)',
+                    '--color-title-glow': 'rgba(77, 204, 190, 0.3)',
+                    '--avatar-filter': 'sepia(1) saturate(4) hue-rotate(140deg) brightness(0.9)',
+                    '--icon-filter-discord': 'grayscale(1) sepia(1) saturate(4) hue-rotate(116deg) brightness(0.9)',
+                    '--icon-filter-reddit': 'grayscale(1) sepia(1) saturate(4) hue-rotate(128deg) brightness(0.9)',
+                    '--icon-filter-bluesky': 'grayscale(1) sepia(1) saturate(4) hue-rotate(140deg) brightness(0.9)',
+                    '--icon-filter-github': 'grayscale(1) sepia(1) saturate(4) hue-rotate(152deg) brightness(0.9)',
+                    '--icon-filter-steam': 'grayscale(1) sepia(1) saturate(4) hue-rotate(164deg) brightness(0.9)'
+                }
+            },
+            {
+                name: 'magenta',
+                vars: {
+                    '--color-background-start': '#3d1f34',
+                    '--color-background-end': '#251622',
+                    '--color-button-bg': 'rgba(97, 64, 88, 0.301)',
+                    '--color-bio-bg': 'rgba(97, 64, 88, 0.4)',
+                    '--color-button-hover': 'rgba(215, 131, 177, 0.2)',
+                    '--color-sheen': '#f7658b96',
+                    '--color-avatar-glow': 'rgba(180, 104, 148, 0.636)',
+                    '--seven-color': 'rgba(106, 66, 92, 0.6)',
+                    '--seven-glow': 'rgba(180, 104, 148, 0.3)',
+                    '--shooting-seven-color': '#822f5c',
+                    '--shooting-seven-glow': 'rgba(180, 104, 148, 0.8)',
+                    '--color-title-glow': 'rgba(204, 77, 140, 0.3)',
+                    '--avatar-filter': 'sepia(1) saturate(4) hue-rotate(300deg) brightness(0.9)',
+                    '--icon-filter-discord': 'grayscale(1) sepia(1) saturate(4) hue-rotate(276deg) brightness(0.9)',
+                    '--icon-filter-reddit': 'grayscale(1) sepia(1) saturate(4) hue-rotate(288deg) brightness(0.9)',
+                    '--icon-filter-bluesky': 'grayscale(1) sepia(1) saturate(4) hue-rotate(300deg) brightness(0.9)',
+                    '--icon-filter-github': 'grayscale(1) sepia(1) saturate(4) hue-rotate(312deg) brightness(0.9)',
+                    '--icon-filter-steam': 'grayscale(1) sepia(1) saturate(4) hue-rotate(324deg) brightness(0.9)'
+                }
+            },
+            {
+                name: 'amber',
+                vars: {
+                    '--color-background-start': '#3d2a1f',
+                    '--color-background-end': '#251a16',
+                    '--color-button-bg': 'rgba(97, 77, 64, 0.301)',
+                    '--color-bio-bg': 'rgba(97, 77, 64, 0.4)',
+                    '--color-button-hover': 'rgba(215, 164, 131, 0.2)',
+                    '--color-sheen': '#f79a6596',
+                    '--color-avatar-glow': 'rgba(180, 140, 104, 0.636)',
+                    '--seven-color': 'rgba(106, 84, 66, 0.6)',
+                    '--seven-glow': 'rgba(180, 140, 104, 0.3)',
+                    '--shooting-seven-color': '#82502f',
+                    '--shooting-seven-glow': 'rgba(180, 140, 104, 0.8)',
+                    '--color-title-glow': 'rgba(204, 130, 77, 0.3)',
+                    '--avatar-filter': 'sepia(1) saturate(4) hue-rotate(-10deg) brightness(0.95)',
+                    '--icon-filter-discord': 'grayscale(1) sepia(1) saturate(4) hue-rotate(-34deg) brightness(0.95)',
+                    '--icon-filter-reddit': 'grayscale(1) sepia(1) saturate(4) hue-rotate(-22deg) brightness(0.95)',
+                    '--icon-filter-bluesky': 'grayscale(1) sepia(1) saturate(4) hue-rotate(-10deg) brightness(0.95)',
+                    '--icon-filter-github': 'grayscale(1) sepia(1) saturate(4) hue-rotate(2deg) brightness(0.95)',
+                    '--icon-filter-steam': 'grayscale(1) sepia(1) saturate(4) hue-rotate(14deg) brightness(0.95)'
+                }
+            },
+            {
+                name: 'azure',
+                vars: {
+                    '--color-background-start': '#1f2a3d',
+                    '--color-background-end': '#161a25',
+                    '--color-button-bg': 'rgba(64, 77, 97, 0.301)',
+                    '--color-bio-bg': 'rgba(64, 77, 97, 0.4)',
+                    '--color-button-hover': 'rgba(131, 164, 215, 0.2)',
+                    '--color-sheen': '#6598f796',
+                    '--color-avatar-glow': 'rgba(104, 140, 180, 0.636)',
+                    '--seven-color': 'rgba(66, 84, 106, 0.6)',
+                    '--seven-glow': 'rgba(104, 140, 180, 0.3)',
+                    '--shooting-seven-color': '#2f5082',
+                    '--shooting-seven-glow': 'rgba(104, 140, 180, 0.8)',
+                    '--color-title-glow': 'rgba(77, 130, 204, 0.3)',
+                    '--avatar-filter': 'sepia(1) saturate(4) hue-rotate(190deg) brightness(0.9)',
+                    '--icon-filter-discord': 'grayscale(1) sepia(1) saturate(4) hue-rotate(166deg) brightness(0.9)',
+                    '--icon-filter-reddit': 'grayscale(1) sepia(1) saturate(4) hue-rotate(178deg) brightness(0.9)',
+                    '--icon-filter-bluesky': 'grayscale(1) sepia(1) saturate(4) hue-rotate(190deg) brightness(0.9)',
+                    '--icon-filter-github': 'grayscale(1) sepia(1) saturate(4) hue-rotate(202deg) brightness(0.9)',
+                    '--icon-filter-steam': 'grayscale(1) sepia(1) saturate(4) hue-rotate(214deg) brightness(0.9)'
+                }
+            },
+            {
+                name: 'emerald',
+                vars: {
+                    '--color-background-start': '#1f3d26',
+                    '--color-background-end': '#16251b',
+                    '--color-button-bg': 'rgba(64, 97, 72, 0.301)',
+                    '--color-bio-bg': 'rgba(64, 97, 72, 0.4)',
+                    '--color-button-hover': 'rgba(131, 215, 148, 0.2)',
+                    '--color-sheen': '#65f78896',
+                    '--color-avatar-glow': 'rgba(104, 180, 122, 0.636)',
+                    '--seven-color': 'rgba(66, 106, 74, 0.6)',
+                    '--seven-glow': 'rgba(104, 180, 122, 0.3)',
+                    '--shooting-seven-color': '#2f8248',
+                    '--shooting-seven-glow': 'rgba(104, 180, 122, 0.8)',
+                    '--color-title-glow': 'rgba(77, 204, 104, 0.3)',
+                    '--avatar-filter': 'sepia(1) saturate(4) hue-rotate(70deg) brightness(0.9)',
+                    '--icon-filter-discord': 'grayscale(1) sepia(1) saturate(4) hue-rotate(46deg) brightness(0.9)',
+                    '--icon-filter-reddit': 'grayscale(1) sepia(1) saturate(4) hue-rotate(58deg) brightness(0.9)',
+                    '--icon-filter-bluesky': 'grayscale(1) sepia(1) saturate(4) hue-rotate(70deg) brightness(0.9)',
+                    '--icon-filter-github': 'grayscale(1) sepia(1) saturate(4) hue-rotate(82deg) brightness(0.9)',
+                    '--icon-filter-steam': 'grayscale(1) sepia(1) saturate(4) hue-rotate(94deg) brightness(0.9)'
+                }
+            },
+            {
+                name: 'crimson',
+                vars: {
+                    '--color-background-start': '#3d1f1f',
+                    '--color-background-end': '#251616',
+                    '--color-button-bg': 'rgba(97, 64, 64, 0.301)',
+                    '--color-bio-bg': 'rgba(97, 64, 64, 0.4)',
+                    '--color-button-hover': 'rgba(215, 131, 131, 0.2)',
+                    '--color-sheen': '#f7656596',
+                    '--color-avatar-glow': 'rgba(180, 104, 104, 0.636)',
+                    '--seven-color': 'rgba(106, 66, 66, 0.6)',
+                    '--seven-glow': 'rgba(180, 104, 104, 0.3)',
+                    '--shooting-seven-color': '#822f2f',
+                    '--shooting-seven-glow': 'rgba(180, 104, 104, 0.8)',
+                    '--color-title-glow': 'rgba(204, 77, 77, 0.3)',
+                    '--avatar-filter': 'sepia(1) saturate(4) hue-rotate(330deg) brightness(0.9)',
+                    '--icon-filter-discord': 'grayscale(1) sepia(1) saturate(4) hue-rotate(306deg) brightness(0.9)',
+                    '--icon-filter-reddit': 'grayscale(1) sepia(1) saturate(4) hue-rotate(318deg) brightness(0.9)',
+                    '--icon-filter-bluesky': 'grayscale(1) sepia(1) saturate(4) hue-rotate(330deg) brightness(0.9)',
+                    '--icon-filter-github': 'grayscale(1) sepia(1) saturate(4) hue-rotate(342deg) brightness(0.9)',
+                    '--icon-filter-steam': 'grayscale(1) sepia(1) saturate(4) hue-rotate(354deg) brightness(0.9)'
+                }
+            },
+            {
+                name: 'gold',
+                vars: {
+                    '--color-background-start': '#3d3a1f',
+                    '--color-background-end': '#252316',
+                    '--color-button-bg': 'rgba(97, 94, 64, 0.301)',
+                    '--color-bio-bg': 'rgba(97, 94, 64, 0.4)',
+                    '--color-button-hover': 'rgba(215, 205, 131, 0.2)',
+                    '--color-sheen': '#f7e46596',
+                    '--color-avatar-glow': 'rgba(180, 170, 104, 0.636)',
+                    '--seven-color': 'rgba(106, 102, 66, 0.6)',
+                    '--seven-glow': 'rgba(180, 170, 104, 0.3)',
+                    '--shooting-seven-color': '#827c2f',
+                    '--shooting-seven-glow': 'rgba(180, 170, 104, 0.8)',
+                    '--color-title-glow': 'rgba(204, 190, 77, 0.3)',
+                    '--avatar-filter': 'sepia(1) saturate(5) hue-rotate(20deg) brightness(1.0)',
+                    '--icon-filter-discord': 'grayscale(1) sepia(1) saturate(5) hue-rotate(-4deg) brightness(1.0)',
+                    '--icon-filter-reddit': 'grayscale(1) sepia(1) saturate(5) hue-rotate(8deg) brightness(1.0)',
+                    '--icon-filter-bluesky': 'grayscale(1) sepia(1) saturate(5) hue-rotate(20deg) brightness(1.0)',
+                    '--icon-filter-github': 'grayscale(1) sepia(1) saturate(5) hue-rotate(32deg) brightness(1.0)',
+                    '--icon-filter-steam': 'grayscale(1) sepia(1) saturate(5) hue-rotate(44deg) brightness(1.0)'
+                }
+            }
+        ];
+
+        let currentThemeIndex = -1;
+
+        function applyTheme(index) {
+            const theme = themes[index];
+            const root = document.documentElement;
+            for (const [prop, value] of Object.entries(theme.vars)) {
+                root.style.setProperty(prop, value);
+            }
+            currentThemeIndex = index;
+        }
+
+        function randomizeTheme() {
+            if (themes.length <= 1) return;
+            let nextIndex;
+            do {
+                nextIndex = Math.floor(Math.random() * themes.length);
+            } while (nextIndex === currentThemeIndex);
+            applyTheme(nextIndex);
+        }
+
+        // Pick a random theme right now, before <body> (and the avatar image)
+        // get parsed — so the page never shows the default purple or the
+        // plain grayscale avatar, even for a frame.
+        applyTheme(Math.floor(Math.random() * themes.length));
+    </script>
 </head>
 <body>
     <div class="stars" id="stars"></div>
-    <button class="theme-switcher" id="themeSwitcher" title="Randomize color theme" aria-label="Randomize color theme">🎨</button>
     <div class="content">
         <div class="header">
-            <a href="https://tinyurl.com/bd7wav28" class="avatar-container" target="_blank">
+            <div class="avatar-container" id="avatarContainer" role="button" tabindex="0" aria-label="Randomize color theme">
                 <img src="/images/avatar/avatar.png" alt="7eventy7" class="avatar">
-            </a>
+            </div>
             <h1 class="username">7eventy7</h1>
             <div class="subtitle-container">
                 <p class="subtitle">call-me-7</p>
@@ -789,199 +971,20 @@
             bioContent.classList.toggle('active');
         });
 
-        // ---- Color theme switcher ----
-        // Each theme is a full palette. The avatar image is expected to be
-        // grayscale — --avatar-filter uses sepia+hue-rotate to tint it to
-        // match, so you never need separate colored avatar files.
-        const themes = [
-            {
-                name: 'purple',
-                vars: {
-                    '--color-background-start': '#2a1f3d',
-                    '--color-background-end': '#1a1625',
-                    '--color-button-bg': 'rgba(77, 64, 97, 0.301)',
-                    '--color-bio-bg': 'rgba(77, 64, 97, 0.4)',
-                    '--color-button-hover': 'rgba(201, 131, 215, 0.2)',
-                    '--color-sheen': '#bf65f796',
-                    '--color-avatar-glow': 'rgba(151, 104, 180, 0.636)',
-                    '--seven-color': 'rgba(92, 66, 106, 0.6)',
-                    '--seven-glow': 'rgba(151, 104, 180, 0.3)',
-                    '--shooting-seven-color': '#822f7d',
-                    '--shooting-seven-glow': 'rgba(151, 104, 180, 0.8)',
-                    '--color-title-glow': 'rgba(156, 77, 204, 0.3)',
-                    '--avatar-filter': 'sepia(1) saturate(4) hue-rotate(230deg) brightness(0.85)'
-                }
-            },
-            {
-                name: 'teal',
-                vars: {
-                    '--color-background-start': '#1f3a3d',
-                    '--color-background-end': '#16262a',
-                    '--color-button-bg': 'rgba(64, 97, 95, 0.301)',
-                    '--color-bio-bg': 'rgba(64, 97, 95, 0.4)',
-                    '--color-button-hover': 'rgba(131, 215, 201, 0.2)',
-                    '--color-sheen': '#65f7d796',
-                    '--color-avatar-glow': 'rgba(104, 180, 170, 0.636)',
-                    '--seven-color': 'rgba(66, 106, 102, 0.6)',
-                    '--seven-glow': 'rgba(104, 180, 170, 0.3)',
-                    '--shooting-seven-color': '#2f827a',
-                    '--shooting-seven-glow': 'rgba(104, 180, 170, 0.8)',
-                    '--color-title-glow': 'rgba(77, 204, 190, 0.3)',
-                    '--avatar-filter': 'sepia(1) saturate(4) hue-rotate(140deg) brightness(0.9)'
-                }
-            },
-            {
-                name: 'magenta',
-                vars: {
-                    '--color-background-start': '#3d1f34',
-                    '--color-background-end': '#251622',
-                    '--color-button-bg': 'rgba(97, 64, 88, 0.301)',
-                    '--color-bio-bg': 'rgba(97, 64, 88, 0.4)',
-                    '--color-button-hover': 'rgba(215, 131, 177, 0.2)',
-                    '--color-sheen': '#f7658b96',
-                    '--color-avatar-glow': 'rgba(180, 104, 148, 0.636)',
-                    '--seven-color': 'rgba(106, 66, 92, 0.6)',
-                    '--seven-glow': 'rgba(180, 104, 148, 0.3)',
-                    '--shooting-seven-color': '#822f5c',
-                    '--shooting-seven-glow': 'rgba(180, 104, 148, 0.8)',
-                    '--color-title-glow': 'rgba(204, 77, 140, 0.3)',
-                    '--avatar-filter': 'sepia(1) saturate(4) hue-rotate(300deg) brightness(0.9)'
-                }
-            },
-            {
-                name: 'amber',
-                vars: {
-                    '--color-background-start': '#3d2a1f',
-                    '--color-background-end': '#251a16',
-                    '--color-button-bg': 'rgba(97, 77, 64, 0.301)',
-                    '--color-bio-bg': 'rgba(97, 77, 64, 0.4)',
-                    '--color-button-hover': 'rgba(215, 164, 131, 0.2)',
-                    '--color-sheen': '#f79a6596',
-                    '--color-avatar-glow': 'rgba(180, 140, 104, 0.636)',
-                    '--seven-color': 'rgba(106, 84, 66, 0.6)',
-                    '--seven-glow': 'rgba(180, 140, 104, 0.3)',
-                    '--shooting-seven-color': '#82502f',
-                    '--shooting-seven-glow': 'rgba(180, 140, 104, 0.8)',
-                    '--color-title-glow': 'rgba(204, 130, 77, 0.3)',
-                    '--avatar-filter': 'sepia(1) saturate(4) hue-rotate(-10deg) brightness(0.95)'
-                }
-            },
-            {
-                name: 'azure',
-                vars: {
-                    '--color-background-start': '#1f2a3d',
-                    '--color-background-end': '#161a25',
-                    '--color-button-bg': 'rgba(64, 77, 97, 0.301)',
-                    '--color-bio-bg': 'rgba(64, 77, 97, 0.4)',
-                    '--color-button-hover': 'rgba(131, 164, 215, 0.2)',
-                    '--color-sheen': '#6598f796',
-                    '--color-avatar-glow': 'rgba(104, 140, 180, 0.636)',
-                    '--seven-color': 'rgba(66, 84, 106, 0.6)',
-                    '--seven-glow': 'rgba(104, 140, 180, 0.3)',
-                    '--shooting-seven-color': '#2f5082',
-                    '--shooting-seven-glow': 'rgba(104, 140, 180, 0.8)',
-                    '--color-title-glow': 'rgba(77, 130, 204, 0.3)',
-                    '--avatar-filter': 'sepia(1) saturate(4) hue-rotate(190deg) brightness(0.9)'
-                }
-            },
-            {
-                name: 'emerald',
-                vars: {
-                    '--color-background-start': '#1f3d26',
-                    '--color-background-end': '#16251b',
-                    '--color-button-bg': 'rgba(64, 97, 72, 0.301)',
-                    '--color-bio-bg': 'rgba(64, 97, 72, 0.4)',
-                    '--color-button-hover': 'rgba(131, 215, 148, 0.2)',
-                    '--color-sheen': '#65f78896',
-                    '--color-avatar-glow': 'rgba(104, 180, 122, 0.636)',
-                    '--seven-color': 'rgba(66, 106, 74, 0.6)',
-                    '--seven-glow': 'rgba(104, 180, 122, 0.3)',
-                    '--shooting-seven-color': '#2f8248',
-                    '--shooting-seven-glow': 'rgba(104, 180, 122, 0.8)',
-                    '--color-title-glow': 'rgba(77, 204, 104, 0.3)',
-                    '--avatar-filter': 'sepia(1) saturate(4) hue-rotate(70deg) brightness(0.9)'
-                }
-            },
-            {
-                name: 'crimson',
-                vars: {
-                    '--color-background-start': '#3d1f1f',
-                    '--color-background-end': '#251616',
-                    '--color-button-bg': 'rgba(97, 64, 64, 0.301)',
-                    '--color-bio-bg': 'rgba(97, 64, 64, 0.4)',
-                    '--color-button-hover': 'rgba(215, 131, 131, 0.2)',
-                    '--color-sheen': '#f7656596',
-                    '--color-avatar-glow': 'rgba(180, 104, 104, 0.636)',
-                    '--seven-color': 'rgba(106, 66, 66, 0.6)',
-                    '--seven-glow': 'rgba(180, 104, 104, 0.3)',
-                    '--shooting-seven-color': '#822f2f',
-                    '--shooting-seven-glow': 'rgba(180, 104, 104, 0.8)',
-                    '--color-title-glow': 'rgba(204, 77, 77, 0.3)',
-                    '--avatar-filter': 'sepia(1) saturate(4) hue-rotate(330deg) brightness(0.9)'
-                }
-            },
-            {
-                name: 'gold',
-                vars: {
-                    '--color-background-start': '#3d3a1f',
-                    '--color-background-end': '#252316',
-                    '--color-button-bg': 'rgba(97, 94, 64, 0.301)',
-                    '--color-bio-bg': 'rgba(97, 94, 64, 0.4)',
-                    '--color-button-hover': 'rgba(215, 205, 131, 0.2)',
-                    '--color-sheen': '#f7e46596',
-                    '--color-avatar-glow': 'rgba(180, 170, 104, 0.636)',
-                    '--seven-color': 'rgba(106, 102, 66, 0.6)',
-                    '--seven-glow': 'rgba(180, 170, 104, 0.3)',
-                    '--shooting-seven-color': '#827c2f',
-                    '--shooting-seven-glow': 'rgba(180, 170, 104, 0.8)',
-                    '--color-title-glow': 'rgba(204, 190, 77, 0.3)',
-                    '--avatar-filter': 'sepia(1) saturate(5) hue-rotate(20deg) brightness(1.0)'
-                }
-            }
-        ];
+        // Clicking (or pressing Enter/Space on) the avatar now randomizes
+        // the color theme instead of opening a link. applyTheme/randomizeTheme
+        // are already defined in the early <head> script.
+        const avatarContainer = document.getElementById('avatarContainer');
 
-        const THEME_STORAGE_KEY = 'linktreeThemeIndex';
-        let currentThemeIndex = 0;
-
-        function applyTheme(index) {
-            const theme = themes[index];
-            const root = document.documentElement;
-            for (const [prop, value] of Object.entries(theme.vars)) {
-                root.style.setProperty(prop, value);
-            }
-            currentThemeIndex = index;
-            try {
-                localStorage.setItem(THEME_STORAGE_KEY, String(index));
-            } catch (e) {
-                // localStorage unavailable (private browsing, etc.) — no big deal
-            }
-        }
-
-        function randomizeTheme() {
-            if (themes.length <= 1) return;
-            let nextIndex;
-            do {
-                nextIndex = Math.floor(Math.random() * themes.length);
-            } while (nextIndex === currentThemeIndex);
-            applyTheme(nextIndex);
-        }
-
-        // Restore a previously chosen theme on reload, if any
-        try {
-            const saved = localStorage.getItem(THEME_STORAGE_KEY);
-            if (saved !== null && themes[parseInt(saved, 10)]) {
-                applyTheme(parseInt(saved, 10));
-            }
-        } catch (e) {
-            // ignore
-        }
-
-        const themeSwitcher = document.getElementById('themeSwitcher');
-        themeSwitcher.addEventListener('click', () => {
+        avatarContainer.addEventListener('click', () => {
             randomizeTheme();
-            themeSwitcher.classList.remove('spinning');
-            void themeSwitcher.offsetWidth; // restart animation
-            themeSwitcher.classList.add('spinning');
+        });
+
+        avatarContainer.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                randomizeTheme();
+            }
         });
     </script>
 </body>
