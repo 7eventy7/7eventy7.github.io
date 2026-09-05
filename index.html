@@ -341,7 +341,8 @@
             to { opacity: 1; }
         }
 
-        .bio-button {
+        .bio-button,
+        .goat-button {
             background: var(--color-button-bg);
             color: var(--color-text-primary);
             border: none;
@@ -357,18 +358,21 @@
             white-space: nowrap;
         }
 
-        .bio-button:hover {
+        .bio-button:hover,
+        .goat-button:hover {
             background: var(--color-button-hover);
             transform: translateY(var(--hover-lift-distance));
         }
 
-        .bio-button::after {
+        .bio-button::after,
+        .goat-button::after {
             content: '▼';
             font-size: 0.8em;
             transition: transform var(--hover-animation-speed) var(--transition-bounce);
         }
 
-        .bio-button.active::after {
+        .bio-button.active::after,
+        .goat-button.active::after {
             transform: rotate(180deg);
         }
 
@@ -383,7 +387,20 @@
             width: 100%;
         }
 
-        .bio-content.active {
+        .goat-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, opacity 0.3s ease-out, transform 0.3s ease-out;
+            opacity: 0;
+            transform: translateY(-10px);
+            background: var(--color-bio-bg);
+            border-radius: 12px;
+            width: 75%;
+            margin: 0 auto;
+        }
+
+        .bio-content.active,
+        .goat-content.active {
             max-height: 500px;
             opacity: 1;
             transform: translateY(0);
@@ -392,6 +409,51 @@
             font-size: var(--font-size-bio);
             line-height: 1.6;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .goat-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .goat-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.4rem 0.6rem;
+            border-radius: 8px;
+            transition: background var(--hover-out-speed) ease;
+        }
+
+        .goat-list li:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .goat-rank {
+            font-family: var(--font-mono);
+            color: var(--color-text-secondary);
+            width: 1.5rem;
+            flex-shrink: 0;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        .goat-title {
+            flex: 1;
+            color: var(--color-text-primary);
+            font-weight: 500;
+        }
+
+        .goat-rating {
+            font-family: var(--font-mono);
+            color: var(--color-text-primary);
+            background: var(--color-button-bg);
+            padding: 0.15rem 0.55rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            flex-shrink: 0;
         }
 
         .metrics {
@@ -595,6 +657,19 @@
             position: fixed;
             bottom: 0.75rem;
             left: 0.9rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--color-text-secondary);
+            opacity: 0.4;
+            z-index: 5;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .updated-tag {
+            position: fixed;
+            bottom: 0.75rem;
+            right: 0.9rem;
             font-family: var(--font-mono);
             font-size: 0.75rem;
             color: var(--color-text-secondary);
@@ -899,6 +974,7 @@
 <body>
     <script>applyTheme(currentThemeIndex);</script>
     <div class="version-tag">v0.3.1</div>
+    <div class="updated-tag" id="updatedTag"></div>
     <div class="stars" id="stars"></div>
     <div class="content">
         <div class="header">
@@ -909,9 +985,24 @@
             <div class="subtitle-container">
                 <p class="subtitle">call-me-7</p>
                 <button class="bio-button">About Me</button>
+                <button class="goat-button">Goat List</button>
             </div>
             <div class="bio-content">
                 I'm a tech tinkerer with a penchant for pixel art, game modding, and all things open source. When I'm not buried in tech projects, I'm likely cooking up something new, playing video games, or organizing my growing lighter collection from different countries. I've traveled all over the world, and absolutely love to visit brand new places that interest me. As a devout Pastafarian, I believe in noodling around and never taking life too seriously.
+            </div>
+            <div class="goat-content">
+                <ol class="goat-list">
+                    <li><span class="goat-rank">1</span><span class="goat-title">Minecraft: Java Edition</span></li>
+                    <li><span class="goat-rank">2</span><span class="goat-title">Team Fortress 2</span></li>
+                    <li><span class="goat-rank">3</span><span class="goat-title">Stardew Valley</span></li>
+                    <li><span class="goat-rank">4</span><span class="goat-title">Deadlock</span></li>
+                    <li><span class="goat-rank">5</span><span class="goat-title">The Binding of Isaac: Rebirth</span></li>
+                    <li><span class="goat-rank">6</span><span class="goat-title">Baldur's Gate 3</span></li>
+                    <li><span class="goat-rank">7</span><span class="goat-title">Skyrim: Special Edition</span></li>
+                    <li><span class="goat-rank">8</span><span class="goat-title">Sea of Thieves</span></li>
+                    <li><span class="goat-rank">9</span><span class="goat-title">Doom Eternal</span></li>
+                    <li><span class="goat-rank">10</span><span class="goat-title">ARC Raiders</span></li>
+                </ol>
             </div>
         </div>
 
@@ -974,11 +1065,32 @@
 
     <footer class="footer">
         // lucky numbers only //
+        <div class="metrics">
+            <div class="metric">
+                <span>👁</span>
+                <span class="metric-value" id="visits">···</span>
+            </div>
+        </div>
     </footer>
 
     <script>
         const starsContainer = document.getElementById('stars');
         const numberOfSevens = 50;
+
+        // Visit counter — self-hosted on Cloudflare Workers + KV
+        fetch('https://visitor-counter.garnet-e45.workers.dev/hit')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('visits').textContent = data.value.toLocaleString();
+            })
+            .catch(error => {
+                console.error('Error fetching visit count:', error);
+            });
+
+        // Bump this whenever you make a change — GitHub Pages doesn't
+        // reliably serve Last-Modified headers, so this can't be automated.
+        const lastUpdated = '09.05.26';
+        document.getElementById('updatedTag').textContent = `updated ${lastUpdated}`;
 
         for (let i = 0; i < numberOfSevens; i++) {
             const seven = document.createElement('span');
@@ -1048,10 +1160,31 @@
 
         const bioButton = document.querySelector('.bio-button');
         const bioContent = document.querySelector('.bio-content');
+        const goatButton = document.querySelector('.goat-button');
+        const goatContent = document.querySelector('.goat-content');
+
+        function closeBio() {
+            bioButton.classList.remove('active');
+            bioContent.classList.remove('active');
+        }
+
+        function closeGoat() {
+            goatButton.classList.remove('active');
+            goatContent.classList.remove('active');
+        }
 
         bioButton.addEventListener('click', () => {
-            bioButton.classList.toggle('active');
-            bioContent.classList.toggle('active');
+            const opening = !bioButton.classList.contains('active');
+            closeGoat();
+            bioButton.classList.toggle('active', opening);
+            bioContent.classList.toggle('active', opening);
+        });
+
+        goatButton.addEventListener('click', () => {
+            const opening = !goatButton.classList.contains('active');
+            closeBio();
+            goatButton.classList.toggle('active', opening);
+            goatContent.classList.toggle('active', opening);
         });
 
         // Clicking (or pressing Enter/Space on) the avatar steps to the next
