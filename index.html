@@ -322,9 +322,17 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-wrap: wrap;
             gap: 1rem;
             margin-bottom: 0.5rem;
             min-height: 2.5rem;
+        }
+
+        .header-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
         .subtitle {
@@ -342,7 +350,8 @@
         }
 
         .bio-button,
-        .goat-button {
+        .goat-button,
+        .travel-button {
             background: var(--color-button-bg);
             color: var(--color-text-primary);
             border: none;
@@ -359,20 +368,23 @@
         }
 
         .bio-button:hover,
-        .goat-button:hover {
+        .goat-button:hover,
+        .travel-button:hover {
             background: var(--color-button-hover);
             transform: translateY(var(--hover-lift-distance));
         }
 
         .bio-button::after,
-        .goat-button::after {
+        .goat-button::after,
+        .travel-button::after {
             content: '▼';
             font-size: 0.8em;
             transition: transform var(--hover-animation-speed) var(--transition-bounce);
         }
 
         .bio-button.active::after,
-        .goat-button.active::after {
+        .goat-button.active::after,
+        .travel-button.active::after {
             transform: rotate(180deg);
         }
 
@@ -387,7 +399,8 @@
             width: 100%;
         }
 
-        .goat-content {
+        .goat-content,
+        .travel-content {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.5s ease-out, opacity 0.3s ease-out, transform 0.3s ease-out;
@@ -399,8 +412,13 @@
             margin: 0 auto;
         }
 
+        .travel-content {
+            width: 100%;
+        }
+
         .bio-content.active,
-        .goat-content.active {
+        .goat-content.active,
+        .travel-content.active {
             max-height: 500px;
             opacity: 1;
             transform: translateY(0);
@@ -411,11 +429,156 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
 
+        .goat-content.active {
+            max-height: 600px;
+        }
+
+        .travel-content.active {
+            max-height: 720px;
+            padding: 1rem 1rem 1.1rem;
+        }
+
+        .travel-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 0.75rem;
+            margin-bottom: 0.65rem;
+        }
+
+        .travel-caption {
+            font-family: var(--font-subtitle);
+            font-size: 0.85rem;
+            letter-spacing: 0.02em;
+            margin: 0;
+        }
+
+        .travel-count {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--color-text-secondary);
+            margin-left: 0.5rem;
+        }
+
+        .travel-hover-name {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--color-text-secondary);
+            text-align: right;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .travel-hover-name.is-active {
+            color: var(--color-text-primary);
+        }
+
+        .travel-map-wrap {
+            width: 100%;
+            line-height: 0;
+        }
+
+        .travel-map {
+            width: 100%;
+            height: auto;
+            display: block;
+            overflow: visible;
+        }
+
+        .travel-map path {
+            fill: rgba(255, 255, 255, 0.16);
+            stroke: rgba(0, 0, 0, 0.22);
+            stroke-width: 0.35;
+            transition: fill var(--theme-transition-speed) ease;
+            cursor: pointer;
+        }
+
+        .travel-map .visited,
+        .travel-map .visited path {
+            fill: var(--shooting-seven-color);
+            cursor: pointer;
+        }
+
+        .travel-map .visited:hover,
+        .travel-map .visited:hover path {
+            fill: var(--shooting-seven-glow);
+        }
+
+        .travel-legend {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.25rem;
+            margin-top: 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--color-text-secondary);
+        }
+
+        .travel-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .travel-legend-swatch {
+            width: 0.7rem;
+            height: 0.7rem;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .travel-legend-swatch.visited {
+            background: var(--shooting-seven-color);
+            box-shadow: 0 0 8px var(--shooting-seven-glow);
+        }
+
+        .travel-legend-swatch.unvisited {
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .goat-tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.85rem;
+        }
+
+        .goat-tab {
+            background: var(--color-button-bg);
+            color: var(--color-text-primary);
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-family: var(--font-subtitle);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all var(--hover-animation-speed) var(--transition-bounce);
+        }
+
+        .goat-tab:hover {
+            background: var(--color-button-hover);
+            transform: translateY(var(--hover-lift-distance));
+        }
+
+        .goat-tab.active {
+            background: var(--color-button-hover);
+            box-shadow: 0 0 0 1px var(--color-sheen);
+        }
+
         .goat-list {
             list-style: none;
             display: flex;
             flex-direction: column;
             gap: 0.4rem;
+        }
+
+        .goat-list[hidden] {
+            display: none;
         }
 
         .goat-list li {
@@ -649,7 +812,8 @@
             box-shadow: 0 4px 12px var(--color-button-shadow);
         }
 
-        .paw-icon {
+        .paw-icon,
+        .kofi-heart {
             flex-shrink: 0;
         }
 
@@ -995,14 +1159,22 @@
             <h1 class="username">7eventy7</h1>
             <div class="subtitle-container">
                 <p class="subtitle">call-me-7</p>
-                <button class="bio-button">About Me</button>
-                <button class="goat-button">Goat List</button>
+                <div class="header-actions">
+                    <button class="bio-button">About Me</button>
+                    <button class="goat-button">Goat List</button>
+                    <button class="travel-button">Travel Map</button>
+                </div>
             </div>
             <div class="bio-content">
                 I'm a tech tinkerer with a penchant for pixel art, game modding, and all things open source. When I'm not buried in tech projects, I'm likely cooking up something new, playing video games, or organizing my growing lighter collection from different countries. I've traveled all over the world, and absolutely love to visit brand new places that interest me. As a devout Pastafarian, I believe in noodling around and never taking life too seriously.
             </div>
             <div class="goat-content">
-                <ol class="goat-list">
+                <div class="goat-tabs">
+                    <button type="button" class="goat-tab active" data-goat-tab="games">Games</button>
+                    <button type="button" class="goat-tab" data-goat-tab="music">Music</button>
+                    <button type="button" class="goat-tab" data-goat-tab="shows">Shows</button>
+                </div>
+                <ol class="goat-list" data-goat-list="games">
                     <li><span class="goat-rank">1</span><span class="goat-title">Minecraft: Java Edition</span></li>
                     <li><span class="goat-rank">2</span><span class="goat-title">Team Fortress 2</span></li>
                     <li><span class="goat-rank">3</span><span class="goat-title">Stardew Valley</span></li>
@@ -1014,6 +1186,41 @@
                     <li><span class="goat-rank">9</span><span class="goat-title">Doom Eternal</span></li>
                     <li><span class="goat-rank">10</span><span class="goat-title">ARC Raiders</span></li>
                 </ol>
+                <ol class="goat-list" data-goat-list="music" hidden>
+                    <li><span class="goat-rank">1</span><span class="goat-title">Young Thug</span></li>
+                    <li><span class="goat-rank">2</span><span class="goat-title">Playboi Carti</span></li>
+                    <li><span class="goat-rank">3</span><span class="goat-title">Juice WRLD</span></li>
+                    <li><span class="goat-rank">4</span><span class="goat-title">Ski Mask The Slump God</span></li>
+                    <li><span class="goat-rank">5</span><span class="goat-title">Denzel Curry</span></li>
+                    <li><span class="goat-rank">6</span><span class="goat-title">Kodak Black</span></li>
+                    <li><span class="goat-rank">7</span><span class="goat-title">Trippie Redd</span></li>
+                    <li><span class="goat-rank">8</span><span class="goat-title">Smino</span></li>
+                    <li><span class="goat-rank">9</span><span class="goat-title">MF DOOM</span></li>
+                    <li><span class="goat-rank">10</span><span class="goat-title">Smokepurpp</span></li>
+                </ol>
+                <ol class="goat-list" data-goat-list="shows" hidden>
+                    <li><span class="goat-rank">1</span><span class="goat-title">Trailer Park Boys</span></li>
+                    <li><span class="goat-rank">2</span><span class="goat-title">Smiling Friends</span></li>
+                    <li><span class="goat-rank">3</span><span class="goat-title">South Park</span></li>
+                    <li><span class="goat-rank">4</span><span class="goat-title">The Boondocks</span></li>
+                    <li><span class="goat-rank">5</span><span class="goat-title">It's Always Sunny in Philadelphia</span></li>
+                    <li><span class="goat-rank">6</span><span class="goat-title">Regular Show</span></li>
+                    <li><span class="goat-rank">7</span><span class="goat-title">Adventure Time</span></li>
+                    <li><span class="goat-rank">8</span><span class="goat-title">Futurama</span></li>
+                    <li><span class="goat-rank">9</span><span class="goat-title">Better Call Saul</span></li>
+                    <li><span class="goat-rank">10</span><span class="goat-title">Clone High</span></li>
+                </ol>
+            </div>
+            <div class="travel-content">
+                <div class="travel-header">
+                    <p class="travel-caption">places I've been<span class="travel-count" id="travelCount"></span></p>
+                    <span class="travel-hover-name" id="travelHoverName">~</span>
+                </div>
+                <div class="travel-map-wrap" id="travelMapWrap"></div>
+                <div class="travel-legend">
+                    <span class="travel-legend-item"><span class="travel-legend-swatch visited"></span>visited</span>
+                    <span class="travel-legend-item"><span class="travel-legend-swatch unvisited"></span>everywhere else</span>
+                </div>
             </div>
         </div>
 
@@ -1083,7 +1290,8 @@
             </a>
 
             <a href="https://ko-fi.com/7eventy7" class="long-button support-button" target="_blank">
-                SUPPORT MY WORK ON KOFI   🤍
+                SUPPORT MY WORK ON KOFI
+                <span class="kofi-heart" aria-hidden="true">🤍</span>
             </a>
         </div>
 
@@ -1186,6 +1394,8 @@
         const bioContent = document.querySelector('.bio-content');
         const goatButton = document.querySelector('.goat-button');
         const goatContent = document.querySelector('.goat-content');
+        const travelButton = document.querySelector('.travel-button');
+        const travelContent = document.querySelector('.travel-content');
 
         function closeBio() {
             bioButton.classList.remove('active');
@@ -1197,9 +1407,15 @@
             goatContent.classList.remove('active');
         }
 
+        function closeTravel() {
+            travelButton.classList.remove('active');
+            travelContent.classList.remove('active');
+        }
+
         bioButton.addEventListener('click', () => {
             const opening = !bioButton.classList.contains('active');
             closeGoat();
+            closeTravel();
             bioButton.classList.toggle('active', opening);
             bioContent.classList.toggle('active', opening);
         });
@@ -1207,9 +1423,157 @@
         goatButton.addEventListener('click', () => {
             const opening = !goatButton.classList.contains('active');
             closeBio();
+            closeTravel();
             goatButton.classList.toggle('active', opening);
             goatContent.classList.toggle('active', opening);
         });
+
+        travelButton.addEventListener('click', () => {
+            const opening = !travelButton.classList.contains('active');
+            closeBio();
+            closeGoat();
+            travelButton.classList.toggle('active', opening);
+            travelContent.classList.toggle('active', opening);
+        });
+
+        const goatTabs = goatContent.querySelectorAll('.goat-tab');
+        const goatLists = goatContent.querySelectorAll('.goat-list');
+
+        goatTabs.forEach((tab) => {
+            tab.addEventListener('click', () => {
+                const target = tab.dataset.goatTab;
+                goatTabs.forEach((t) => t.classList.toggle('active', t === tab));
+                goatLists.forEach((list) => {
+                    list.hidden = list.dataset.goatList !== target;
+                });
+            });
+        });
+
+        const visitedCountries = {
+            cn: 'China',
+            id: 'Indonesia',
+            at: 'Austria',
+            de: 'Germany',
+            is: 'Iceland',
+            lt: 'Lithuania',
+            pl: 'Poland',
+            sk: 'Slovakia',
+            si: 'Slovenia',
+            se: 'Sweden',
+            gb: 'United Kingdom',
+            cr: 'Costa Rica',
+            jm: 'Jamaica',
+            mx: 'Mexico',
+            ni: 'Nicaragua',
+            pa: 'Panama',
+            us: 'United States of America'
+        };
+
+        const countryNames = {
+            _somaliland: 'Somaliland',
+            ae: 'United Arab Emirates', af: 'Afghanistan', al: 'Albania', am: 'Armenia',
+            ao: 'Angola', ar: 'Argentina', at: 'Austria', au: 'Australia', az: 'Azerbaijan',
+            ba: 'Bosnia and Herzegovina', bd: 'Bangladesh', be: 'Belgium', bf: 'Burkina Faso',
+            bg: 'Bulgaria', bi: 'Burundi', bj: 'Benin', bn: 'Brunei', bo: 'Bolivia',
+            br: 'Brazil', bs: 'Bahamas', bt: 'Bhutan', bw: 'Botswana', by: 'Belarus',
+            bz: 'Belize', ca: 'Canada', cd: 'DR Congo', cf: 'Central African Republic',
+            cg: 'Congo', ch: 'Switzerland', ci: 'Côte d\'Ivoire', cl: 'Chile', cm: 'Cameroon',
+            cn: 'China', co: 'Colombia', cr: 'Costa Rica', cu: 'Cuba', cv: 'Cabo Verde',
+            cy: 'Cyprus', cz: 'Czechia', de: 'Germany', dj: 'Djibouti', dk: 'Denmark',
+            dm: 'Dominica', do: 'Dominican Republic', dz: 'Algeria', ec: 'Ecuador',
+            ee: 'Estonia', eg: 'Egypt', er: 'Eritrea', es: 'Spain', et: 'Ethiopia',
+            fi: 'Finland', fk: 'Falkland Islands', fr: 'France', ga: 'Gabon',
+            gb: 'United Kingdom', ge: 'Georgia', gh: 'Ghana', gl: 'Greenland', gm: 'Gambia',
+            gn: 'Guinea', gq: 'Equatorial Guinea', gr: 'Greece', gt: 'Guatemala',
+            gw: 'Guinea-Bissau', gy: 'Guyana', hn: 'Honduras', hr: 'Croatia', ht: 'Haiti',
+            hu: 'Hungary', id: 'Indonesia', ie: 'Ireland', il: 'Israel', in: 'India',
+            iq: 'Iraq', ir: 'Iran', is: 'Iceland', it: 'Italy', jm: 'Jamaica', jo: 'Jordan',
+            jp: 'Japan', ke: 'Kenya', kg: 'Kyrgyzstan', kh: 'Cambodia', km: 'Comoros',
+            kp: 'North Korea', kr: 'South Korea', kw: 'Kuwait', kz: 'Kazakhstan',
+            la: 'Laos', lb: 'Lebanon', lc: 'Saint Lucia', lk: 'Sri Lanka', lr: 'Liberia',
+            ls: 'Lesotho', lt: 'Lithuania', lu: 'Luxembourg', lv: 'Latvia', ly: 'Libya',
+            ma: 'Morocco', md: 'Moldova', me: 'Montenegro', mg: 'Madagascar', mk: 'North Macedonia',
+            ml: 'Mali', mm: 'Myanmar', mn: 'Mongolia', mr: 'Mauritania', mt: 'Malta',
+            mu: 'Mauritius', mv: 'Maldives', mw: 'Malawi', mx: 'Mexico', my: 'Malaysia',
+            mz: 'Mozambique', na: 'Namibia', nc: 'New Caledonia', ne: 'Niger', ng: 'Nigeria',
+            ni: 'Nicaragua', nl: 'Netherlands', no: 'Norway', np: 'Nepal', nz: 'New Zealand',
+            om: 'Oman', pa: 'Panama', pe: 'Peru', pg: 'Papua New Guinea', ph: 'Philippines',
+            pk: 'Pakistan', pl: 'Poland', pr: 'Puerto Rico', pt: 'Portugal', py: 'Paraguay',
+            qa: 'Qatar', ro: 'Romania', rs: 'Serbia', ru: 'Russia', rw: 'Rwanda',
+            sa: 'Saudi Arabia', sb: 'Solomon Islands', sc: 'Seychelles', sd: 'Sudan',
+            se: 'Sweden', sg: 'Singapore', si: 'Slovenia', sk: 'Slovakia', sl: 'Sierra Leone',
+            sn: 'Senegal', so: 'Somalia', sr: 'Suriname', ss: 'South Sudan', st: 'São Tomé and Príncipe',
+            sv: 'El Salvador', sy: 'Syria', sz: 'Eswatini', td: 'Chad', tg: 'Togo',
+            th: 'Thailand', tj: 'Tajikistan', tm: 'Turkmenistan', tn: 'Tunisia', tr: 'Turkey',
+            tt: 'Trinidad and Tobago', tw: 'Taiwan', tz: 'Tanzania', ua: 'Ukraine',
+            ug: 'Uganda', us: 'United States of America', uy: 'Uruguay', uz: 'Uzbekistan',
+            vc: 'Saint Vincent and the Grenadines', ve: 'Venezuela', vn: 'Vietnam',
+            vu: 'Vanuatu', ye: 'Yemen', za: 'South Africa', zm: 'Zambia', zw: 'Zimbabwe'
+        };
+
+        Object.assign(countryNames, visitedCountries);
+
+        const visitedIds = new Set(Object.keys(visitedCountries));
+
+        const travelCount = document.getElementById('travelCount');
+        travelCount.textContent = `${Object.keys(visitedCountries).length}/${Object.keys(countryNames).length}`;
+
+        const travelHoverName = document.getElementById('travelHoverName');
+
+        function setTravelHoverName(info) {
+            if (!info || !info.name) {
+                travelHoverName.textContent = '~';
+                travelHoverName.classList.remove('is-active');
+                return;
+            }
+
+            travelHoverName.textContent = `${info.visited ? '✓' : '✕'} ${info.name}`;
+            travelHoverName.classList.add('is-active');
+        }
+
+        function hoverFromMapTarget(svg, target) {
+            if (!target || target === svg) return null;
+            let node = target;
+            while (node && node !== svg) {
+                if (node.id && countryNames[node.id]) {
+                    return {
+                        name: countryNames[node.id],
+                        visited: visitedIds.has(node.id)
+                    };
+                }
+                node = node.parentNode;
+            }
+            return null;
+        }
+
+        function markVisited(el) {
+            el.classList.add('visited');
+        }
+
+        fetch('/images/vectors/travel-map.svg')
+            .then((response) => response.text())
+            .then((markup) => {
+                const wrap = document.getElementById('travelMapWrap');
+                wrap.innerHTML = markup;
+                const svg = wrap.querySelector('svg');
+                if (!svg) return;
+
+                Object.keys(visitedCountries).forEach((code) => {
+                    const el = svg.getElementById(code);
+                    if (el) markVisited(el);
+                });
+
+                svg.addEventListener('pointermove', (event) => {
+                    setTravelHoverName(hoverFromMapTarget(svg, event.target));
+                });
+
+                svg.addEventListener('pointerleave', () => {
+                    setTravelHoverName(null);
+                });
+            })
+            .catch(() => {
+                document.getElementById('travelMapWrap').textContent = 'Map could not be loaded.';
+            });
 
         // Clicking (or pressing Enter/Space on) the avatar steps to the next
         // color theme in the curated order, instead of opening a link.
