@@ -382,6 +382,13 @@
             transition: transform var(--hover-animation-speed) var(--transition-bounce);
         }
 
+        .bio-button.active,
+        .goat-button.active,
+        .travel-button.active {
+            background: var(--color-button-hover);
+            box-shadow: 0 0 0 1px var(--color-sheen);
+        }
+
         .bio-button.active::after,
         .goat-button.active::after,
         .travel-button.active::after {
@@ -856,18 +863,31 @@
             user-select: none;
         }
 
+        .bio-button:focus-visible,
+        .goat-button:focus-visible,
+        .travel-button:focus-visible,
+        .goat-tab:focus-visible,
+        .social-button:focus-visible,
+        .long-button:focus-visible,
+        .avatar-container:focus-visible {
+            outline: 2px solid var(--color-sheen);
+            outline-offset: 3px;
+        }
+
         @media (max-width: 600px) {
             body {
                 padding: 1rem 1rem 3rem 1rem;
             }
 
             .social-buttons {
-                gap: 1rem;
+                gap: var(--social-gap);
+                flex-wrap: nowrap;
             }
 
             :root {
-                --social-button-size: 80px;
-                --social-icon-size: 50px;
+                --social-gap: clamp(0.5rem, 2.5vw, 1rem);
+                --social-button-size: clamp(46px, calc((100vw - 2.5rem - 4 * var(--social-gap)) / 5), 80px);
+                --social-icon-size: calc(var(--social-button-size) * 0.65);
                 --avatar-size: 200px;
                 --font-size-title: 2.25rem;
             }
@@ -1267,7 +1287,7 @@
                 NEXUS MODS
             </a>
             <a href="https://gamebanana.com/members/3980598" class="long-button" target="_blank">
-                <img src="/images/icons/gamebanana.png" alt="Nexus Mods">
+                <img src="/images/icons/gamebanana.png" alt="GameBanana">
                 GAME BANANA
             </a>
             <a href="https://modrinth.com/user/7eventy7" class="long-button" target="_blank">
