@@ -487,16 +487,122 @@
             color: var(--color-text-primary);
         }
 
-        .travel-map-wrap {
+        .travel-map-viewport {
+            position: relative;
             width: 100%;
+            aspect-ratio: 2 / 1;
+            overflow: hidden;
+            border-radius: 8px;
+            isolation: isolate;
+        }
+
+        .travel-map-wrap {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
             line-height: 0;
+            cursor: grab;
+            transform-origin: 50% 50%;
+            transition: transform 0.35s var(--transition-bounce);
+            will-change: transform;
+            touch-action: pan-y;
+        }
+
+        .travel-map-wrap.is-zoomed {
+            touch-action: none;
+        }
+
+        .travel-map-wrap.is-dragging {
+            cursor: grabbing;
+            transition: none;
+            user-select: none;
         }
 
         .travel-map {
             width: 100%;
-            height: auto;
+            height: 100%;
             display: block;
             overflow: visible;
+        }
+
+        .travel-map-controls {
+            position: absolute;
+            left: 0.6rem;
+            bottom: 0.6rem;
+            z-index: 2;
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .travel-zoom-btn {
+            width: 2rem;
+            height: 2rem;
+            border: none;
+            border-radius: 50%;
+            background: var(--color-button-bg);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            color: var(--color-text-primary);
+            font-family: var(--font-subtitle);
+            font-size: 1.15rem;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+            transition: all var(--hover-animation-speed) var(--transition-bounce);
+        }
+
+        .travel-zoom-btn:hover:not(:disabled) {
+            background: var(--color-button-hover);
+            transform: translateY(var(--hover-lift-distance));
+        }
+
+        .travel-zoom-btn:active:not(:disabled) {
+            transform: scale(0.92);
+        }
+
+        .travel-zoom-btn:disabled {
+            opacity: 0.35;
+            cursor: default;
+        }
+
+        .travel-zoom-dots {
+            position: absolute;
+            right: 0.6rem;
+            bottom: 0.6rem;
+            z-index: 2;
+            display: flex;
+            align-items: flex-end;
+            gap: 0.3rem;
+            padding: 0.5rem 0.6rem 0.4rem;
+            border-radius: 999px;
+            background: var(--color-button-bg);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+        }
+
+        .travel-zoom-dot {
+            display: block;
+            border-radius: 50%;
+            background: var(--color-text-secondary);
+            opacity: 0.5;
+            transition: all var(--hover-animation-speed) var(--transition-bounce);
+        }
+
+        .travel-zoom-dot:nth-child(1) { width: 5px; height: 5px; }
+        .travel-zoom-dot:nth-child(2) { width: 7px; height: 7px; }
+        .travel-zoom-dot:nth-child(3) { width: 9px; height: 9px; }
+        .travel-zoom-dot:nth-child(4) { width: 11px; height: 11px; }
+        .travel-zoom-dot:nth-child(5) { width: 13px; height: 13px; }
+
+        .travel-zoom-dot.is-active {
+            background: var(--color-text-primary);
+            opacity: 1;
+            box-shadow: 0 0 8px var(--shooting-seven-glow);
         }
 
         .travel-map path {
@@ -559,7 +665,7 @@
 
         .travel-map-skeleton {
             width: 100%;
-            aspect-ratio: 2 / 1;
+            height: 100%;
             border-radius: 8px;
             background: linear-gradient(
                 90deg,
@@ -1302,7 +1408,20 @@
                     <p class="travel-caption">places I've been</p>
                     <span class="travel-hover-name" id="travelHoverName">~</span>
                 </div>
-                <div class="travel-map-wrap" id="travelMapWrap"></div>
+                <div class="travel-map-viewport" id="travelMapViewport">
+                    <div class="travel-map-wrap" id="travelMapWrap"></div>
+                    <div class="travel-map-controls">
+                        <button type="button" class="travel-zoom-btn" id="travelZoomOut" aria-label="Zoom out">−</button>
+                        <button type="button" class="travel-zoom-btn" id="travelZoomIn" aria-label="Zoom in">+</button>
+                    </div>
+                    <div class="travel-zoom-dots" id="travelZoomDots" aria-hidden="true">
+                        <span class="travel-zoom-dot"></span>
+                        <span class="travel-zoom-dot"></span>
+                        <span class="travel-zoom-dot"></span>
+                        <span class="travel-zoom-dot"></span>
+                        <span class="travel-zoom-dot"></span>
+                    </div>
+                </div>
                 <div class="travel-legend">
                     <span class="travel-legend-item"><span class="travel-legend-swatch visited"></span>visited</span>
                     <span class="travel-legend-item"><span class="travel-legend-swatch unvisited"></span>everywhere else</span>
@@ -1657,6 +1776,7 @@
             // selection (if any) once the pointer moves off the map.
             svg.addEventListener('pointermove', (event) => {
                 if (event.pointerType === 'touch') return;
+                if (svg.parentElement.classList.contains('is-dragging')) return;
                 const info = hoverFromMapTarget(svg, event.target);
                 setTravelHoverName(info || selectedCountry);
             });
@@ -1677,6 +1797,128 @@
                     setSelectedCountry(info);
                 }
             });
+        }
+
+        // Zoom/pan for the travel map. Zoom "level" is expressed as the
+        // percentage of the map visible in the viewport (100% = the
+        // untouched fit-to-box view). Pressing + steps toward smaller
+        // percentages, which scales the map up so it fills more of, and
+        // eventually spills past, the edges of the viewport window.
+        function setupTravelMapZoom() {
+            const viewport = document.getElementById('travelMapViewport');
+            const wrap = document.getElementById('travelMapWrap');
+            const zoomInBtn = document.getElementById('travelZoomIn');
+            const zoomOutBtn = document.getElementById('travelZoomOut');
+            const dots = Array.from(document.querySelectorAll('.travel-zoom-dot'));
+            if (!viewport || !wrap || !zoomInBtn || !zoomOutBtn) return;
+
+            const ZOOM_PCTS = [100, 80, 60, 40, 20];
+            let levelIndex = 0;
+            let panX = 0;
+            let panY = 0;
+            let isDragging = false;
+            let dragMoved = false;
+            let dragStartX = 0;
+            let dragStartY = 0;
+            let panStartX = 0;
+            let panStartY = 0;
+
+            function currentScale() {
+                return 100 / ZOOM_PCTS[levelIndex];
+            }
+
+            function clampPan() {
+                const scale = currentScale();
+                if (scale <= 1) {
+                    panX = 0;
+                    panY = 0;
+                    return;
+                }
+                const rect = viewport.getBoundingClientRect();
+                const maxX = (rect.width * (scale - 1)) / 2;
+                const maxY = (rect.height * (scale - 1)) / 2;
+                panX = Math.min(maxX, Math.max(-maxX, panX));
+                panY = Math.min(maxY, Math.max(-maxY, panY));
+            }
+
+            function applyTransform() {
+                clampPan();
+                wrap.style.transform = `translate(${panX}px, ${panY}px) scale(${currentScale()})`;
+            }
+
+            function updateControls() {
+                zoomInBtn.disabled = levelIndex === ZOOM_PCTS.length - 1;
+                zoomOutBtn.disabled = levelIndex === 0;
+                dots.forEach((dot, i) => dot.classList.toggle('is-active', i === levelIndex));
+                wrap.classList.toggle('is-zoomed', levelIndex > 0);
+                wrap.style.cursor = levelIndex > 0 ? 'grab' : 'default';
+            }
+
+            function setLevel(nextIndex) {
+                levelIndex = Math.min(ZOOM_PCTS.length - 1, Math.max(0, nextIndex));
+                if (levelIndex === 0) {
+                    panX = 0;
+                    panY = 0;
+                }
+                applyTransform();
+                updateControls();
+            }
+
+            zoomInBtn.addEventListener('click', () => setLevel(levelIndex + 1));
+            zoomOutBtn.addEventListener('click', () => setLevel(levelIndex - 1));
+
+            function onPointerDown(event) {
+                if (currentScale() <= 1) return;
+                isDragging = true;
+                dragMoved = false;
+                dragStartX = event.clientX;
+                dragStartY = event.clientY;
+                panStartX = panX;
+                panStartY = panY;
+                wrap.classList.add('is-dragging');
+                try { wrap.setPointerCapture(event.pointerId); } catch (err) {}
+            }
+
+            function onPointerMove(event) {
+                if (!isDragging) return;
+                const dx = event.clientX - dragStartX;
+                const dy = event.clientY - dragStartY;
+                if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragMoved = true;
+                panX = panStartX + dx;
+                panY = panStartY + dy;
+                applyTransform();
+            }
+
+            function onPointerUp(event) {
+                if (!isDragging) return;
+                isDragging = false;
+                wrap.classList.remove('is-dragging');
+                try { wrap.releasePointerCapture(event.pointerId); } catch (err) {}
+                // A drag that actually moved the map shouldn't also register
+                // as a click on whatever country is under the pointer.
+                if (dragMoved) {
+                    const suppressClick = (ev) => {
+                        ev.stopPropagation();
+                        wrap.removeEventListener('click', suppressClick, true);
+                    };
+                    wrap.addEventListener('click', suppressClick, true);
+                }
+            }
+
+            wrap.addEventListener('pointerdown', onPointerDown);
+            wrap.addEventListener('pointermove', onPointerMove);
+            wrap.addEventListener('pointerup', onPointerUp);
+            wrap.addEventListener('pointercancel', onPointerUp);
+
+            window.addEventListener('resize', () => {
+                if (levelIndex > 0) applyTransform();
+            });
+
+            updateControls();
+
+            window.travelMapZoom = {
+                reset: () => setLevel(0)
+            };
         }
 
         function renderTravelMapSkeleton(wrap) {
@@ -1704,6 +1946,7 @@
             const wrap = document.getElementById('travelMapWrap');
             selectedCountry = null;
             setTravelHoverName(null);
+            if (window.travelMapZoom) window.travelMapZoom.reset();
             renderTravelMapSkeleton(wrap);
 
             fetch('/images/vectors/travel-map.svg')
@@ -1718,6 +1961,11 @@
                         renderTravelMapError(wrap);
                         return;
                     }
+                    const viewport = document.getElementById('travelMapViewport');
+                    const vb = svg.viewBox && svg.viewBox.baseVal;
+                    if (viewport && vb && vb.width && vb.height) {
+                        viewport.style.aspectRatio = `${vb.width} / ${vb.height}`;
+                    }
                     setupTravelMapInteractivity(svg);
                 })
                 .catch(() => {
@@ -1725,6 +1973,7 @@
                 });
         }
 
+        setupTravelMapZoom();
         loadTravelMap();
 
         // Clicking (or pressing Enter/Space on) the avatar steps to the next
