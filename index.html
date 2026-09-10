@@ -414,6 +414,7 @@
 
         .travel-content {
             width: 100%;
+            max-width: min(700px, calc(100vw - 2rem));
         }
 
         .bio-content.active,
@@ -439,9 +440,9 @@
         }
 
         .travel-header {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             align-items: baseline;
-            justify-content: space-between;
             gap: 0.75rem;
             margin-bottom: 0.65rem;
         }
@@ -451,13 +452,15 @@
             font-size: 0.85rem;
             letter-spacing: 0.02em;
             margin: 0;
+            text-align: center;
+            white-space: nowrap;
         }
 
         .travel-count {
             font-family: var(--font-mono);
             font-size: 0.75rem;
             color: var(--color-text-secondary);
-            margin-left: 0.5rem;
+            text-align: left;
         }
 
         .travel-hover-name {
@@ -469,7 +472,6 @@
             overflow: hidden;
             text-overflow: ellipsis;
             min-width: 0;
-            flex: 1;
         }
 
         .travel-hover-name.is-active {
@@ -1213,7 +1215,8 @@
             </div>
             <div class="travel-content">
                 <div class="travel-header">
-                    <p class="travel-caption">places I've been<span class="travel-count" id="travelCount"></span></p>
+                    <span class="travel-count" id="travelCount"></span>
+                    <p class="travel-caption">places I've been</p>
                     <span class="travel-hover-name" id="travelHoverName">~</span>
                 </div>
                 <div class="travel-map-wrap" id="travelMapWrap"></div>
