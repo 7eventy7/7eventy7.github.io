@@ -83,10 +83,12 @@
         html {
             height: 100%;
             width: 100%;
+            background: var(--color-background-end);
+            transition: background var(--theme-transition-speed) ease;
         }
 
         body {
-            background: linear-gradient(135deg, var(--color-background-start) 0%, var(--color-background-end) 100%) fixed;
+            background: linear-gradient(135deg, var(--color-background-start) 0%, var(--color-background-end) 100%);
             min-height: 100vh;
             width: 100%;
             display: flex;
@@ -516,6 +518,12 @@
             fill: var(--shooting-seven-glow);
         }
 
+        .travel-map .is-selected,
+        .travel-map .is-selected path {
+            stroke: var(--color-text-primary);
+            stroke-width: 1.2;
+        }
+
         .travel-legend {
             display: flex;
             justify-content: center;
@@ -547,6 +555,54 @@
 
         .travel-legend-swatch.unvisited {
             background: rgba(255, 255, 255, 0.16);
+        }
+
+        .travel-map-skeleton {
+            width: 100%;
+            aspect-ratio: 2 / 1;
+            border-radius: 8px;
+            background: linear-gradient(
+                90deg,
+                var(--color-button-bg) 25%,
+                var(--color-button-hover) 37%,
+                var(--color-button-bg) 63%
+            );
+            background-size: 400% 100%;
+            animation: travel-map-shimmer 1.4s ease infinite;
+        }
+
+        @keyframes travel-map-shimmer {
+            0% { background-position: 100% 0; }
+            100% { background-position: 0 0; }
+        }
+
+        .travel-map-error {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 2.5rem 1rem;
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--color-text-secondary);
+        }
+
+        .travel-map-retry {
+            background: var(--color-button-bg);
+            color: var(--color-text-primary);
+            border: none;
+            padding: 0.4rem 1.1rem;
+            border-radius: 20px;
+            font-family: var(--font-subtitle);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all var(--hover-animation-speed) var(--transition-bounce);
+        }
+
+        .travel-map-retry:hover {
+            background: var(--color-button-hover);
+            transform: translateY(var(--hover-lift-distance));
         }
 
         .goat-tabs {
@@ -1136,14 +1192,16 @@
                     document.body.style.setProperty(prop, value);
                 }
             }
-            // Set the body background directly with literal values rather
-            // than only relying on the CSS variable lookup — this removes
-            // any dependency on inheritance timing and guarantees the
-            // gradient always matches the chosen theme, on every load.
+            // Set the html/body background directly with literal values
+            // rather than only relying on the CSS variable lookup — this
+            // removes any dependency on inheritance timing and guarantees
+            // the gradient (and the solid overscroll-area fill on <html>)
+            // always match the chosen theme, on every load.
             if (document.body) {
                 document.body.style.background =
-                    `linear-gradient(135deg, ${theme.vars['--color-background-start']} 0%, ${theme.vars['--color-background-end']} 100%) fixed`;
+                    `linear-gradient(135deg, ${theme.vars['--color-background-start']} 0%, ${theme.vars['--color-background-end']} 100%)`;
             }
+            root.style.background = theme.vars['--color-background-end'];
             currentThemeIndex = index;
         }
 
@@ -1175,7 +1233,7 @@
 </head>
 <body>
     <script>applyTheme(currentThemeIndex);</script>
-    <div class="version-tag">v0.3.1</div>
+    <div class="version-tag">v0.3.2</div>
     <div class="updated-tag" id="updatedTag"></div>
     <div class="stars" id="stars"></div>
     <div class="content">
@@ -1559,6 +1617,8 @@
             while (node && node !== svg) {
                 if (node.id && countryNames[node.id]) {
                     return {
+                        id: node.id,
+                        el: node,
                         name: countryNames[node.id],
                         visited: visitedIds.has(node.id)
                     };
@@ -1572,30 +1632,100 @@
             el.classList.add('visited');
         }
 
-        fetch('/images/vectors/travel-map.svg')
-            .then((response) => response.text())
-            .then((markup) => {
-                const wrap = document.getElementById('travelMapWrap');
-                wrap.innerHTML = markup;
-                const svg = wrap.querySelector('svg');
-                if (!svg) return;
+        // Persists across pointerleave/touchend so a tapped country stays
+        // visible on devices with no hover state.
+        let selectedCountry = null;
 
-                Object.keys(visitedCountries).forEach((code) => {
-                    const el = svg.getElementById(code);
-                    if (el) markVisited(el);
-                });
+        function setSelectedCountry(info) {
+            if (selectedCountry && selectedCountry.el) {
+                selectedCountry.el.classList.remove('is-selected');
+            }
+            selectedCountry = info;
+            if (selectedCountry && selectedCountry.el) {
+                selectedCountry.el.classList.add('is-selected');
+            }
+            setTravelHoverName(selectedCountry);
+        }
 
-                svg.addEventListener('pointermove', (event) => {
-                    setTravelHoverName(hoverFromMapTarget(svg, event.target));
-                });
-
-                svg.addEventListener('pointerleave', () => {
-                    setTravelHoverName(null);
-                });
-            })
-            .catch(() => {
-                document.getElementById('travelMapWrap').textContent = 'Map could not be loaded.';
+        function setupTravelMapInteractivity(svg) {
+            Object.keys(visitedCountries).forEach((code) => {
+                const el = svg.getElementById(code);
+                if (el) markVisited(el);
             });
+
+            // Mouse/pen: live hover preview, falls back to the pinned
+            // selection (if any) once the pointer moves off the map.
+            svg.addEventListener('pointermove', (event) => {
+                if (event.pointerType === 'touch') return;
+                const info = hoverFromMapTarget(svg, event.target);
+                setTravelHoverName(info || selectedCountry);
+            });
+
+            svg.addEventListener('pointerleave', (event) => {
+                if (event.pointerType === 'touch') return;
+                setTravelHoverName(selectedCountry);
+            });
+
+            // Touch (and click, harmless on desktop too): tap a country to
+            // pin its name in place since touch devices have no hover.
+            // Tapping the same country again, or empty space, clears it.
+            svg.addEventListener('click', (event) => {
+                const info = hoverFromMapTarget(svg, event.target);
+                if (info && selectedCountry && info.id === selectedCountry.id) {
+                    setSelectedCountry(null);
+                } else {
+                    setSelectedCountry(info);
+                }
+            });
+        }
+
+        function renderTravelMapSkeleton(wrap) {
+            wrap.innerHTML = '<div class="travel-map-skeleton" aria-hidden="true"></div>';
+        }
+
+        function renderTravelMapError(wrap) {
+            wrap.innerHTML = '';
+
+            const errorBox = document.createElement('div');
+            errorBox.className = 'travel-map-error';
+            errorBox.textContent = 'Map could not be loaded.';
+
+            const retryButton = document.createElement('button');
+            retryButton.type = 'button';
+            retryButton.className = 'travel-map-retry';
+            retryButton.textContent = 'Retry';
+            retryButton.addEventListener('click', loadTravelMap);
+
+            errorBox.appendChild(retryButton);
+            wrap.appendChild(errorBox);
+        }
+
+        function loadTravelMap() {
+            const wrap = document.getElementById('travelMapWrap');
+            selectedCountry = null;
+            setTravelHoverName(null);
+            renderTravelMapSkeleton(wrap);
+
+            fetch('/images/vectors/travel-map.svg')
+                .then((response) => {
+                    if (!response.ok) throw new Error('travel map request failed');
+                    return response.text();
+                })
+                .then((markup) => {
+                    wrap.innerHTML = markup;
+                    const svg = wrap.querySelector('svg');
+                    if (!svg) {
+                        renderTravelMapError(wrap);
+                        return;
+                    }
+                    setupTravelMapInteractivity(svg);
+                })
+                .catch(() => {
+                    renderTravelMapError(wrap);
+                });
+        }
+
+        loadTravelMap();
 
         // Clicking (or pressing Enter/Space on) the avatar steps to the next
         // color theme in the curated order, instead of opening a link.
